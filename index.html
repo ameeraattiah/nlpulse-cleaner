@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>NLPulse Dataset Cleaner</title>
+    <style>
+      body { font-family: sans-serif; text-align: center; padding: 40px; }
+      button { margin-top: 10px; padding: 8px 16px; font-size: 16px; }
+      input { margin-bottom: 10px; }
+      #status { margin-top: 15px; font-weight: bold; color: green; }
+    </style>
+  </head>
+  <body>
+    <h2>🧼 Clean Your Dataset</h2>
+    <input type="file" id="csvInput" accept=".csv" />
+    <br />
+    <button onclick="processFile()">Process and Download</button>
+    <p id="status"></p>
+
+    <script>
+      function processFile() {
+        const input = document.getElementById('csvInput');
+        const file = input.files[0];
+        if (!file) {
+          document.getElementById("status").innerText = "⚠️ Please select a file.";
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const text = e.target.result;
+          const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+          const originalCount = lines.length;
+
+          const unique = Array.from(new Set(lines));
+          const cleanedCount = unique.length;
+
+          const cleaned = unique.join('\n');
+          const blob = new Blob([cleaned], { type: 'text/csv' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'cleaned_dataset.csv';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+
+          document.getElementById("status").innerText =
+            `✅ Cleaned & downloaded!\nOriginal: ${originalCount} → Cleaned: ${cleanedCount}`;
+        };
+
+        reader.readAsText(file);
+      }
+    </script>
+  </body>
+</html>
