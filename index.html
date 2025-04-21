@@ -167,7 +167,7 @@
     formData.append('file', fileToProcess);
     selected.forEach(opt => formData.append('options[]', opt));
   
-    fetch('https://your-backend.com/process', {
+    fetch('https://nlpulse-cleaner-backend.onrender.com', {
       method: 'POST',
       body: formData
     })
