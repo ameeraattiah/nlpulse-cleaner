@@ -102,6 +102,13 @@
     .warning {
       color: #d35400;
     }
+
+    #filename {
+      margin-top: 0.75rem;
+      font-size: 0.95rem;
+      color: #555;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -111,6 +118,7 @@
     <h1>🧼 Clean Your Dataset</h1>
     <label class="file-label" for="csvInput">Choose or Drop File</label>
     <input type="file" id="csvInput" accept=".csv" />
+    <div id="filename"></div>
 
     <div class="checkboxes">
       <label><input type="checkbox" id="tokenize" /> Tokenization</label>
@@ -127,9 +135,9 @@
     const overlay = document.getElementById("overlay");
     const input = document.getElementById("csvInput");
     const status = document.getElementById("status");
+    const fileNameDisplay = document.getElementById("filename");
     let fileToProcess = null;
 
-    // Drag-and-drop handlers
     window.addEventListener("dragover", (e) => {
       e.preventDefault();
       overlay.classList.add("active");
@@ -146,13 +154,14 @@
       overlay.classList.remove("active");
       if (e.dataTransfer.files.length) {
         fileToProcess = e.dataTransfer.files[0];
-        processFile();
+        fileNameDisplay.innerText = `📄 File selected: ${fileToProcess.name}`;
       }
     });
 
     input.addEventListener("change", () => {
       if (input.files.length) {
         fileToProcess = input.files[0];
+        fileNameDisplay.innerText = `📄 File selected: ${fileToProcess.name}`;
       }
     });
 
