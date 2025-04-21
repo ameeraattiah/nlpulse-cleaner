@@ -9,7 +9,7 @@
       font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
-      background-image: url('assets/background.png');
+      background-image: url('assets/background.png'); /* Replace with your background image path */
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -53,29 +53,32 @@
       font-size: 2rem;
       font-weight: 600;
       color: #2234dd;
-      margin-bottom: 1rem;
+      margin-bottom: 1.2rem;
     }
 
-    label.file-label {
-      color: #2234dd;
-      font-weight: 500;
-      cursor: pointer;
-      text-decoration: underline;
+    label {
+      display: block;
+      text-align: left;
+      margin: 0.4rem 0;
+      font-size: 1rem;
+    }
+
+    .checkboxes {
+      text-align: left;
+      margin-bottom: 1rem;
     }
 
     input[type="file"] {
       display: none;
     }
 
-    .checkboxes {
-      text-align: left;
-      margin: 1rem auto;
-      max-width: 400px;
-    }
-
-    .checkboxes label {
-      display: block;
-      margin-bottom: 0.5rem;
+    .file-label {
+      color: #2234dd;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: underline;
+      display: inline-block;
+      margin-bottom: 1rem;
     }
 
     button {
@@ -89,15 +92,13 @@
       margin-top: 1rem;
     }
 
-    #filename {
-      font-size: 0.9rem;
-      color: #555;
-      margin-top: 0.5rem;
-      font-style: italic;
+    button:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
     }
 
     #status {
-      margin-top: 1.2rem;
+      margin-top: 1.5rem;
       font-weight: 500;
       white-space: pre-wrap;
     }
@@ -109,25 +110,38 @@
     .warning {
       color: #d35400;
     }
+
+    #filename {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 0.5rem;
+    }
   </style>
 </head>
 <body>
-  <div class="overlay" id="overlay">Drop your CSV here</div>
+  <div class="overlay" id="overlay">Drop your CSV file here</div>
 
   <div class="card">
     <h1>🧼 Clean Your Dataset</h1>
+
     <label class="file-label" for="csvInput">Choose or Drop File</label>
     <input type="file" id="csvInput" accept=".csv" />
     <div id="filename"></div>
 
     <div class="checkboxes">
-      <label><input type="checkbox" id="tokenize" /> Tokenization</label>
-      <label><input type="checkbox" id="normalize" /> Normalization</label>
-      <label><input type="checkbox" id="deduplicate" checked /> Deduplication</label>
-      <label><input type="checkbox" id="diacritics" /> Remove Diacritics</label>
+      <label><input type="checkbox" id="selectAll" /> Select All</label>
+      <label><input type="checkbox" class="option" value="tokenization" /> Tokenization</label>
+      <label><input type="checkbox" class="option" value="normalization" /> Normalization</label>
+      <label><input type="checkbox" class="option" value="deduplication" /> Deduplication</label>
+      <label><input type="checkbox" class="option" value="diacritics" /> Diacritization Handling</label>
+      <label><input type="checkbox" disabled /> Academic Filtering (Coming Soon)</label>
+      <label><input type="checkbox" class="option" value="blocklist" /> Blocklist Filtering</label>
+      <label><input type="checkbox" class="option" value="language" /> Language Detection</label>
+      <label><input type="checkbox" class="option" value="html" /> HTML Cleaning</label>
+      <label><input type="checkbox" class="option" value="noise" /> Noise Removal</label>
     </div>
 
-    <button onclick="processFile()">Process and Download</button>
+    <button onclick="processFile()">Process</button>
     <p id="status"></p>
   </div>
 
@@ -135,10 +149,13 @@
     const overlay = document.getElementById("overlay");
     const input = document.getElementById("csvInput");
     const status = document.getElementById("status");
-    const fileNameDisplay = document.getElementById("filename");
+    const filename = document.getElementById("filename");
+    const selectAll = document.getElementById("selectAll");
+    const checkboxes = document.querySelectorAll(".option");
+
     let fileToProcess = null;
 
-    // Drag-and-drop
+    // Drag & Drop
     window.addEventListener("dragover", (e) => {
       e.preventDefault();
       overlay.classList.add("active");
@@ -155,68 +172,59 @@
       overlay.classList.remove("active");
       if (e.dataTransfer.files.length) {
         fileToProcess = e.dataTransfer.files[0];
-        fileNameDisplay.innerText = `📄 File selected: ${fileToProcess.name}`;
-        status.innerText = "";
+        filename.textContent = "📄 " + fileToProcess.name;
       }
     });
 
+    // Manual input
     input.addEventListener("change", () => {
       if (input.files.length) {
         fileToProcess = input.files[0];
-        fileNameDisplay.innerText = `📄 File selected: ${fileToProcess.name}`;
-        status.innerText = "";
+        filename.textContent = "📄 " + fileToProcess.name;
       }
     });
 
-    function removeDiacritics(text) {
-      return text.normalize("NFD").replace(/\p{Diacritic}/gu, "");
-    }
-
-    function normalizeText(text) {
-      return text.replace(/[إأآا]/g, 'ا').replace(/ى/g, 'ي').replace(/ؤ/g, 'و').replace(/ئ/g, 'ي');
-    }
-
-    function tokenize(text) {
-      return text.replace(/([.,!?\\s])/g, ' $1 ').replace(/\s+/g, ' ').trim();
-    }
+    // Select All
+    selectAll.addEventListener("change", () => {
+      checkboxes.forEach(cb => cb.checked = selectAll.checked);
+    });
 
     function processFile() {
-      const file = fileToProcess;
-      if (!file) {
-        status.innerText = "⚠️ Please select or drop a CSV file.";
+      if (!fileToProcess) {
+        status.textContent = "⚠️ Please upload a CSV file.";
         status.className = "warning";
         return;
       }
 
-      const isAnyChecked = ['tokenize', 'normalize', 'deduplicate', 'diacritics']
-        .some(id => document.getElementById(id).checked);
-
-      if (!isAnyChecked) {
-        status.innerText = "⚠️ Please select at least one processing option.";
+      const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+      if (selected.length === 0) {
+        status.textContent = "⚠️ Please select at least one service to apply.";
         status.className = "warning";
         return;
       }
 
       const reader = new FileReader();
       reader.onload = function (e) {
-        let text = e.target.result;
-        let lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+        let lines = e.target.result.split('\n').map(l => l.trim()).filter(Boolean);
         const originalCount = lines.length;
 
-        if (document.getElementById('diacritics').checked) {
-          lines = lines.map(removeDiacritics);
-        }
-        if (document.getElementById('normalize').checked) {
-          lines = lines.map(normalizeText);
-        }
-        if (document.getElementById('tokenize').checked) {
-          lines = lines.map(tokenize);
-        }
-        if (document.getElementById('deduplicate').checked) {
+        // Simulated Services
+        if (selected.includes("deduplication")) {
           lines = Array.from(new Set(lines));
         }
+        if (selected.includes("html")) {
+          lines = lines.map(l => l.replace(/<[^>]*>/g, ""));
+        }
+        if (selected.includes("noise")) {
+          lines = lines.map(l => l.replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, "").replace(/\s+/g, " ").trim());
+        }
+
+        // Fake tokenization/normalization/others (demo only)
+        // Add your actual cleaning logic here as needed
 
         const cleaned = lines.join('\n');
+        const cleanedCount = lines.length;
+
         const blob = new Blob([cleaned], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -226,10 +234,10 @@
         a.click();
         document.body.removeChild(a);
 
-        status.innerText = `✅ Cleaned & downloaded!\nOriginal: ${originalCount} → Cleaned: ${lines.length}`;
+        status.textContent = `✅ Cleaned & downloaded!\nOriginal: ${originalCount} → Cleaned: ${cleanedCount}`;
         status.className = "success";
       };
-      reader.readAsText(file);
+      reader.readAsText(fileToProcess);
     }
   </script>
 </body>
