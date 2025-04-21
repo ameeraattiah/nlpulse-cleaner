@@ -9,102 +9,72 @@
       font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
-      background-image: url('assets/background.png'); /* Replace with your background path */
+      background-image: url('assets/background.png'); /* Replace with your image path */
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      position: relative;
-    }
-
-    .overlay {
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      border: 4px dashed #2234dd;
-      background: rgba(255, 255, 255, 0.6);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: #2234dd;
-    }
-
-    .overlay.active {
-      display: flex;
     }
 
     .card {
-      background-color: rgba(255, 255, 255, 0.96);
+      background-color: rgba(255, 255, 255, 0.95);
       padding: 2rem;
       border-radius: 1rem;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       text-align: center;
       max-width: 600px;
-      width: 95%;
-      z-index: 20;
+      width: 90%;
     }
 
     h1 {
-      font-size: 2rem;
-      font-weight: 600;
+      font-size: 1.8rem;
+      font-weight: 700;
       color: #2234dd;
       margin-bottom: 1rem;
-    }
-
-    input[type="file"] {
-      display: none;
     }
 
     .file-label {
       color: #2234dd;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
       text-decoration: underline;
-      display: inline-block;
-      margin-bottom: 1.2rem;
+      display: block;
+      margin-bottom: 1rem;
     }
 
-    #filename {
+    #fileName {
+      font-size: 0.9rem;
       margin-bottom: 1rem;
       color: #333;
-      font-size: 0.9rem;
     }
 
-    .checkboxes {
+    .checkbox-grid {
       display: flex;
       flex-wrap: wrap;
-      justify-content: space-between;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
-      gap: 0.5rem;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
     }
 
-    .checkbox-group {
+    .column {
       display: flex;
       flex-direction: column;
-      width: 48%;
-      text-align: left;
+      align-items: flex-start;
     }
 
-    .checkbox-group label {
-      margin: 4px 0;
-    }
-
-    #selectAllContainer {
-      margin-bottom: 1rem;
-      text-align: left;
+    .select-all {
       font-weight: bold;
+      color: #2234dd;
+      margin-bottom: 1rem;
     }
 
     button {
       background-color: #2234dd;
       color: white;
-      padding: 0.6rem 1.4rem;
+      padding: 0.6rem 1.5rem;
       border: none;
       border-radius: 0.5rem;
       font-size: 1rem;
@@ -124,31 +94,30 @@
     .warning {
       color: #d35400;
     }
+
+    input[type="file"] {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <div class="overlay" id="overlay">Drop your CSV file here</div>
-
   <div class="card">
     <h1>🧼 Clean Your Dataset</h1>
-
     <label class="file-label" for="csvInput">Choose or Drop File</label>
     <input type="file" id="csvInput" accept=".csv" />
-    <div id="filename"></div>
+    <div id="fileName"></div>
 
-    <div id="selectAllContainer">
-      <label><input type="checkbox" id="selectAll" /> Select All Services</label>
-    </div>
+    <label class="select-all"><input type="checkbox" id="selectAll" /> Select All</label>
 
-    <div class="checkboxes">
-      <div class="checkbox-group">
+    <div class="checkbox-grid">
+      <div class="column">
         <label><input type="checkbox" class="option" value="tokenization" /> Tokenization</label>
         <label><input type="checkbox" class="option" value="normalization" /> Normalization</label>
         <label><input type="checkbox" class="option" value="deduplication" /> Deduplication</label>
         <label><input type="checkbox" class="option" value="diacritics" /> Diacritization Handling</label>
-        <label><input type="checkbox" disabled /> Academic Filtering (Coming Soon)</label>
+        <label><input type="checkbox" class="option" value="academic" disabled /> Academic Filtering (Coming Soon)</label>
       </div>
-      <div class="checkbox-group">
+      <div class="column">
         <label><input type="checkbox" class="option" value="blocklist" /> Blocklist Filtering</label>
         <label><input type="checkbox" class="option" value="language" /> Language Detection</label>
         <label><input type="checkbox" class="option" value="html" /> HTML Cleaning</label>
@@ -161,78 +130,52 @@
   </div>
 
   <script>
-    const overlay = document.getElementById("overlay");
-    const input = document.getElementById("csvInput");
+    const input = document.getElementById('csvInput');
+    const fileName = document.getElementById('fileName');
     const status = document.getElementById("status");
-    const filename = document.getElementById("filename");
-    const selectAll = document.getElementById("selectAll");
-    const checkboxes = document.querySelectorAll(".option");
-
+    const checkboxes = document.querySelectorAll('.option');
+    const selectAll = document.getElementById('selectAll');
     let fileToProcess = null;
 
-    window.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      overlay.classList.add("active");
-    });
-
-    window.addEventListener("dragleave", (e) => {
-      if (e.target === overlay || e.clientY === 0) {
-        overlay.classList.remove("active");
-      }
-    });
-
-    window.addEventListener("drop", (e) => {
-      e.preventDefault();
-      overlay.classList.remove("active");
-      if (e.dataTransfer.files.length) {
-        fileToProcess = e.dataTransfer.files[0];
-        filename.textContent = "📄 " + fileToProcess.name;
-      }
-    });
-
+    // Show file name
     input.addEventListener("change", () => {
       if (input.files.length) {
         fileToProcess = input.files[0];
-        filename.textContent = "📄 " + fileToProcess.name;
+        fileName.textContent = fileToProcess.name;
       }
     });
 
-    selectAll.addEventListener("change", () => {
-      checkboxes.forEach(cb => cb.checked = selectAll.checked);
+    // Select All functionality
+    selectAll.addEventListener('change', () => {
+      checkboxes.forEach(cb => {
+        if (!cb.disabled) cb.checked = selectAll.checked;
+      });
     });
 
     function processFile() {
+      const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
       if (!fileToProcess) {
-        status.textContent = "⚠️ Please upload a CSV file.";
+        status.textContent = "⚠️ Please upload a file.";
         status.className = "warning";
         return;
       }
-
-      const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
       if (selected.length === 0) {
-        status.textContent = "⚠️ Please select at least one service.";
+        status.textContent = "⚠️ Please select at least one processing option.";
         status.className = "warning";
         return;
       }
 
       const reader = new FileReader();
       reader.onload = function (e) {
-        let lines = e.target.result.split('\n').map(l => l.trim()).filter(Boolean);
-        const originalCount = lines.length;
+        let text = e.target.result;
+        let lines = text.split('\n').map(l => l.trim()).filter(Boolean);
 
+        // Dummy placeholder logic based on selected options
         if (selected.includes("deduplication")) {
           lines = Array.from(new Set(lines));
         }
-        if (selected.includes("html")) {
-          lines = lines.map(l => l.replace(/<[^>]*>/g, ""));
-        }
-        if (selected.includes("noise")) {
-          lines = lines.map(l => l.replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, "").replace(/\s+/g, " ").trim());
-        }
 
         const cleaned = lines.join('\n');
-        const cleanedCount = lines.length;
-
         const blob = new Blob([cleaned], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -242,11 +185,22 @@
         a.click();
         document.body.removeChild(a);
 
-        status.textContent = `✅ Cleaned & downloaded!\nOriginal: ${originalCount} → Cleaned: ${cleanedCount}`;
+        status.textContent = `✅ Cleaned & downloaded!\nOriginal: ${e.target.result.split('\n').length} → Cleaned: ${lines.length}`;
         status.className = "success";
       };
       reader.readAsText(fileToProcess);
     }
+
+    // Drag & Drop support
+    window.addEventListener("dragover", (e) => e.preventDefault());
+    window.addEventListener("drop", (e) => {
+      e.preventDefault();
+      if (e.dataTransfer.files.length) {
+        fileToProcess = e.dataTransfer.files[0];
+        input.files = e.dataTransfer.files;
+        fileName.textContent = fileToProcess.name;
+      }
+    });
   </script>
 </body>
 </html>
