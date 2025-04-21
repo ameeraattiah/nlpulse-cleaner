@@ -150,44 +150,46 @@
       });
     });
 
-    function processFile() {
-      const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-      if (!fileToProcess) {
-        status.textContent = "⚠️ Please upload a file.";
-        status.className = "warning";
-        return;
-      }
-      if (selected.length === 0) {
-        status.textContent = "⚠️ Please select at least one processing option.";
-        status.className = "warning";
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        let text = e.target.result;
-        let lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-        const originalCount = lines.length;
-
-        if (selected.includes("deduplication")) {
-          lines = Array.from(new Set(lines));
-        }
-
-        const cleaned = lines.join('\n');
-        const blob = new Blob([cleaned], { type: 'text/csv' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'cleaned_dataset.csv';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-        status.textContent = `✅ Cleaned & downloaded!\nOriginal: ${originalCount} → Cleaned: ${lines.length}`;
-        status.className = "success";
-      };
-      reader.readAsText(fileToProcess);
+  function processFile() {
+    const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+    if (!fileToProcess) {
+      status.textContent = "⚠️ Please upload a file.";
+      status.className = "warning";
+      return;
     }
+    if (selected.length === 0) {
+      status.textContent = "⚠️ Please select at least one processing option.";
+      status.className = "warning";
+      return;
+    }
+  
+    const formData = new FormData();
+    formData.append('file', fileToProcess);
+    selected.forEach(opt => formData.append('options[]', opt));
+  
+    fetch('https://your-backend.com/process', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.blob())
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'processed.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      status.textContent = `✅ Cleaned & downloaded!`;
+      status.className = "success";
+    })
+    .catch(err => {
+      status.textContent = "❌ Error processing the file.";
+      status.className = "warning";
+      console.error(err);
+    });
+  }
+
 
     window.addEventListener("dragover", (e) => e.preventDefault());
     window.addEventListener("drop", (e) => {
