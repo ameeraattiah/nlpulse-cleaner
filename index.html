@@ -7,21 +7,34 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f8f9ff;
-      color: #1b1b1b;
+      background-image: url('assets/background.png'); /* Replace with your actual path */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
+      color: #1b1b1b;
+    }
+
+    .card {
+      background-color: rgba(255, 255, 255, 0.9);
       padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
     }
 
     h1 {
       font-size: 2rem;
       font-weight: 600;
-      color: #2c3e50;
-      margin-bottom: 1.5rem;
+      color: #2234dd;
+      margin-bottom: 1rem;
     }
 
     input[type="file"] {
@@ -30,7 +43,7 @@
       padding: 0.4rem;
       border: 1px solid #ccc;
       border-radius: 0.4rem;
-      background: #fff;
+      width: 100%;
     }
 
     button {
@@ -65,11 +78,13 @@
   </style>
 </head>
 <body>
-  <h1>🧼 Clean Your Dataset</h1>
-  <input type="file" id="csvInput" accept=".csv" />
-  <br />
-  <button onclick="processFile()">Process and Download</button>
-  <p id="status"></p>
+  <div class="card">
+    <h1>🧼 Clean Your Dataset</h1>
+    <input type="file" id="csvInput" accept=".csv" />
+    <br />
+    <button onclick="processFile()">Process and Download</button>
+    <p id="status"></p>
+  </div>
 
   <script>
     function processFile() {
