@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <title>NLPulse Dataset Cleaner</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -128,16 +130,17 @@
       </div>
     </div>
 
-    <div class="format-options">
-      <div class="btn-group" role="group" aria-label="Export Format">
-        <input type="radio" class="btn-check" name="exportFormat" id="csv" value="csv" autocomplete="off" checked>
-        <label class="btn btn-outline-primary" for="csv">CSV</label>
-
-        <input type="radio" class="btn-check" name="exportFormat" id="json" value="json" autocomplete="off">
-        <label class="btn btn-outline-primary" for="json">JSON</label>
-
-        <input type="radio" class="btn-check" name="exportFormat" id="tsv" value="tsv" autocomplete="off">
-        <label class="btn btn-outline-primary" for="tsv">TSV</label>
+    <div style="margin: 1.5rem 0;">
+      <label style="font-weight: 600; color: #2234dd; display: block; margin-bottom: 0.5rem;">Choose Output Format:</label>
+      <div class="btn-group" role="group" aria-label="Choose Output Format">
+        <input type="radio" class="btn-check" name="outputFormat" id="formatCSV" value="csv" autocomplete="off" checked>
+        <label class="btn btn-outline-primary" for="formatCSV">CSV</label>
+    
+        <input type="radio" class="btn-check" name="outputFormat" id="formatJSON" value="json" autocomplete="off">
+        <label class="btn btn-outline-primary" for="formatJSON">JSON</label>
+    
+        <input type="radio" class="btn-check" name="outputFormat" id="formatTSV" value="tsv" autocomplete="off">
+        <label class="btn btn-outline-primary" for="formatTSV">TSV</label>
       </div>
     </div>
 
@@ -167,47 +170,48 @@
     });
 
     function processFile() {
-      const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
-      const exportFormat = document.querySelector('input[name="exportFormat"]:checked').value;
+  const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+  const format = document.querySelector('input[name="outputFormat"]:checked').value;
 
-      if (!fileToProcess) {
-        status.textContent = "⚠️ Please upload a file.";
-        status.className = "warning";
-        return;
-      }
-      if (selected.length === 0) {
-        status.textContent = "⚠️ Please select at least one processing option.";
-        status.className = "warning";
-        return;
-      }
+  if (!fileToProcess) {
+    status.textContent = "⚠️ Please upload a file.";
+    status.className = "warning";
+    return;
+  }
 
-      const formData = new FormData();
-      formData.append('file', fileToProcess);
-      selected.forEach(opt => formData.append('options[]', opt));
-      formData.append('format', exportFormat);
+  if (selected.length === 0) {
+    status.textContent = "⚠️ Please select at least one processing option.";
+    status.className = "warning";
+    return;
+  }
 
-      fetch('https://nlpulse-cleaner-backend.onrender.com/process', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.blob())
-      .then(blob => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `processed.${exportFormat}`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        status.textContent = `✅ Cleaned & downloaded!`;
-        status.className = "success";
-      })
-      .catch(err => {
-        status.textContent = "❌ Error processing the file.";
-        status.className = "warning";
-        console.error(err);
-      });
-    }
+  const formData = new FormData();
+  formData.append('file', fileToProcess);
+  selected.forEach(opt => formData.append('options[]', opt));
+  formData.append('format', format);
+
+  fetch('https://nlpulse-cleaner-backend.onrender.com/process', {
+    method: 'POST',
+    body: formData
+  })
+    .then(response => response.blob())
+    .then(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `processed.${format}`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      status.textContent = `✅ Cleaned & downloaded!`;
+      status.className = "success";
+    })
+    .catch(err => {
+      status.textContent = "❌ Error processing the file.";
+      status.className = "warning";
+      console.error(err);
+    });
+}
 
     window.addEventListener("dragover", (e) => e.preventDefault());
     window.addEventListener("drop", (e) => {
