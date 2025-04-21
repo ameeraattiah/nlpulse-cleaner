@@ -113,10 +113,19 @@
       transition: background-color 0.3s ease, border-color 0.3s ease;
     }
     
+    .drag-overlay {
+      background-color: rgba(34, 52, 221, 0.1); /* soft blue overlay */
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+    }
+    
     .drop-zone.dragover {
       background-color: #f0f4ff;
       border-color: #1a3fe0;
     }
+
     
     .drop-text {
       color: #2234dd;
@@ -155,9 +164,10 @@
     <h1>Clean Your Dataset</h1>
     <div id="dropZone" class="drop-zone">
       <span id="dropLabel">Choose or Drop File Here</span>
-      <button type="button" class="btn-close" aria-label="Close" onclick="removeFile()"></button>
+      <button type="button" class="btn-close" aria-label="Close" onclick="removeFile()" style="display: none;"></button>
       <input type="file" id="csvInput" accept=".csv, .tsv, .json, .txt, .xlsx" />
-    </div>    
+    </div>
+       
 
     <label style="font-weight: 600; color: #2234dd; display: block; margin-bottom: 0.5rem;"> Select the cleaning steps you'd like to apply:</label>
     <label class="select-all"><input type="checkbox" id="selectAll" /> Select All</label>
@@ -272,60 +282,67 @@
         fileToProcess = e.dataTransfer.files[0];
         input.files = e.dataTransfer.files;
         fileName.textContent = fileToProcess.name;
-      }
-    });
-    const dropZone = document.getElementById('dropZone');
-    const dropLabel = document.getElementById('dropLabel');
-    
-    dropZone.addEventListener('click', () => input.click());
-    
-    dropZone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      dropZone.classList.add('dragover');
-    });
-    
-    dropZone.addEventListener('dragleave', () => {
-      dropZone.classList.remove('dragover');
-    });
-    
-    dropZone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dropZone.classList.remove('dragover');
-      if (e.dataTransfer.files.length) {
-        fileToProcess = e.dataTransfer.files[0];
-        input.files = e.dataTransfer.files;
-        updateDropZone();
-      }
-    });
-    
-    removeFileBtn.addEventListener('click', (e) => {
-      e.stopPropagation(); // prevent click from re-opening the file input
-      input.value = "";
-      fileToProcess = null;
-      dropLabel.textContent = "Choose or Drop File Here";
-      removeFileBtn.style.display = "none";
-    });
-function updateDropZone() {
-  const dropLabel = document.getElementById('dropLabel');
-  const dropZone = document.getElementById('dropZone');
-  const closeButton = document.querySelector('.btn-close');
+   const input = document.getElementById('csvInput');
+const dropZone = document.getElementById('dropZone');
+const dropLabel = document.getElementById('dropLabel');
+const closeButton = dropZone.querySelector('.btn-close');
 
+let fileToProcess = null;
+
+// Handle file selection
+input.addEventListener("change", () => {
+  if (input.files.length) {
+    fileToProcess = input.files[0];
+    updateDropZone();
+  }
+});
+
+// Clicking drop zone opens file picker
+dropZone.addEventListener('click', () => input.click());
+
+// Drag & drop events
+window.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  document.body.classList.add("drag-overlay");
+  dropZone.classList.add("dragover");
+});
+
+window.addEventListener("dragleave", () => {
+  document.body.classList.remove("drag-overlay");
+  dropZone.classList.remove("dragover");
+});
+
+window.addEventListener("drop", (e) => {
+  e.preventDefault();
+  document.body.classList.remove("drag-overlay");
+  dropZone.classList.remove("dragover");
+  if (e.dataTransfer.files.length) {
+    fileToProcess = e.dataTransfer.files[0];
+    input.files = e.dataTransfer.files;
+    updateDropZone();
+  }
+});
+
+// Update drop zone with file name or default
+function updateDropZone() {
   if (fileToProcess) {
     dropLabel.textContent = fileToProcess.name;
-    dropZone.classList.add('dragover'); // ✅ highlight when uploaded
-    closeButton.style.display = 'block';
+    closeButton.style.display = 'inline-block';
+    dropZone.classList.add('dragover');
   } else {
     dropLabel.textContent = 'Choose or Drop File Here';
-    dropZone.classList.remove('dragover');
     closeButton.style.display = 'none';
+    dropZone.classList.remove('dragover');
   }
 }
 
+// Remove file
 function removeFile() {
   fileToProcess = null;
   input.value = "";
   updateDropZone();
 }
+
 
   </script>
 </body>
