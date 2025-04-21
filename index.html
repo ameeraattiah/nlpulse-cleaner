@@ -103,14 +103,42 @@
     input[type="file"] {
       display: none;
     }
+    .drop-zone {
+      border: 2px dashed #2234dd;
+      border-radius: 10px;
+      padding: 1.2rem;
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.6);
+      color: #2234dd;
+      cursor: pointer;
+      margin-bottom: 1rem;
+      transition: background-color 0.3s ease;
+    }
+    
+    .drop-zone.dragover {
+      background-color: rgba(34, 52, 221, 0.1);
+      border-color: #2234dd;
+    }
+    
+    #overlay-drag {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(34, 52, 221, 0.1);
+      border: 4px dashed #2234dd;
+      z-index: 1000;
+      display: none;
+    }
   </style>
 </head>
 <body>
   <div class="card">
     <h1>Clean Your Dataset</h1>
-    <label class="file-label" for="csvInput"> Choose or Drop File</label>
-    <input type="file" id="csvInput" accept=".csv, .tsv, .json, .txt, .xlsx" />
+    <div id="dropZone" class="drop-zone">
+      <label for="csvInput">Choose or Drop File Here</label>
+      <input type="file" id="csvInput" accept=".csv, .tsv, .json, .txt, .xlsx" />
+    </div>
     <div id="fileName"></div>
+    
 
     <label style="font-weight: 600; color: #2234dd; display: block; margin-bottom: 0.5rem;"> Select the cleaning steps you'd like to apply:</label>
     <label class="select-all"><input type="checkbox" id="selectAll" /> Select All</label>
@@ -227,6 +255,42 @@
         fileName.textContent = fileToProcess.name;
       }
     });
+  const dropZone = document.getElementById('dropZone');
+  const overlay = document.createElement('div');
+  overlay.id = 'overlay-drag';
+  document.body.appendChild(overlay);
+  
+  // Drag enter anywhere
+  window.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    overlay.style.display = 'block';
+    dropZone.classList.add('dragover');
+  });
+  
+  // Drag leave
+  window.addEventListener('dragleave', (e) => {
+    if (e.relatedTarget === null || e.clientY <= 0) {
+      overlay.style.display = 'none';
+      dropZone.classList.remove('dragover');
+    }
+  });
+  
+  // Drop file
+  window.addEventListener('drop', (e) => {
+    e.preventDefault();
+    overlay.style.display = 'none';
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length) {
+      fileToProcess = e.dataTransfer.files[0];
+      input.files = e.dataTransfer.files;
+      fileName.textContent = fileToProcess.name;
+    }
+  });
+  
+  // Handle manual click
+  dropZone.addEventListener('click', () => input.click());
+
+    
   </script>
 </body>
 </html>
