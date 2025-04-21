@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NLPulse Dataset Cleaner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+      background-image: url('assets/background.png'); /* Replace with your actual image path */
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border: 4px dashed #2234dd;
+      background: rgba(255, 255, 255, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #2234dd;
+    }
+
+    .overlay.active {
+      display: flex;
+    }
+
+    .card {
+      background-color: rgba(255, 255, 255, 0.95);
+      padding: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      z-index: 20;
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #2234dd;
+      margin-bottom: 1.5rem;
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    button {
+      background-color: #2234dd;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 1rem;
+    }
+
+    #status {
+      margin-top: 1.5rem;
+      font-weight: 500;
+      white-space: pre-wrap;
+    }
+
+    .success {
+      color: green;
+    }
+
+    .warning {
+      color: #d35400;
+    }
+
+    .file-label {
+      color: #2234dd;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay" id="overlay">Drop your CSV here</div>
+
+  <div class="card">
+    <h1>🧼 Clean Your Dataset</h1>
+    <label class="file-label" for="csvInput">Choose or Drop File</label>
+    <input type="file" id="csvInput" accept=".csv" />
+    <br />
+    <button onclick="processFile()">Process and Download</button>
+    <p id="status"></p>
+  </div>
+
+  <script>
+    const overlay = document.getElementById("overlay");
+    const input = document.getElementById("csvInput");
+    const status = document.getElementById("status");
+    let fileToProcess = null;
+
+    // Drag & Drop anywhere
+    window.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      overlay.classList.add("active");
+    });
+
+    window.addEventListener("dragleave", (e) => {
+      if (e.target === overlay || e.clientY === 0) {
+        overlay.classList.remove("active");
+      }
+    });
+
+    window.addEventListener("drop", (e) => {
+      e.preventDefault();
+      overlay.classList.remove("active");
+      if (e.dataTransfer.files.length) {
+        fileToProcess = e.dataTransfer.files[0];
+        processFile();
+      }
+    });
+
+    // If user chooses file manually
+    input.addEventListener("change", () => {
+      if (input.files.length) {
+        fileToProcess = input.files[0];
+      }
+    });
+
+    function processFile() {
+      const file = fileToProcess;
+      if (!file) {
+        status.innerHTML = "⚠️ Please select or drop a CSV file.";
+        status.className = "warning";
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const text = e.target.result;
+        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+        const originalCount = lines.length;
+        const unique = Array.from(new Set(lines));
+        const cleanedCount = unique.length;
+
+        const cleaned = unique.join('\n');
+        const blob = new Blob([cleaned], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'cleaned_dataset.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+        status.innerHTML = ✅ Cleaned & downloaded!\nOriginal: ${originalCount} → Cleaned: ${cleanedCount};
+        status.className = "success";
+      };
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>
