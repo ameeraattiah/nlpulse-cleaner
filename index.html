@@ -89,6 +89,13 @@
       margin-top: 1rem;
     }
 
+    #filename {
+      font-size: 0.9rem;
+      color: #555;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
     #status {
       margin-top: 1.2rem;
       font-weight: 500;
@@ -101,13 +108,6 @@
 
     .warning {
       color: #d35400;
-    }
-
-    #filename {
-      margin-top: 0.75rem;
-      font-size: 0.95rem;
-      color: #555;
-      font-style: italic;
     }
   </style>
 </head>
@@ -138,6 +138,7 @@
     const fileNameDisplay = document.getElementById("filename");
     let fileToProcess = null;
 
+    // Drag-and-drop
     window.addEventListener("dragover", (e) => {
       e.preventDefault();
       overlay.classList.add("active");
@@ -155,6 +156,7 @@
       if (e.dataTransfer.files.length) {
         fileToProcess = e.dataTransfer.files[0];
         fileNameDisplay.innerText = `📄 File selected: ${fileToProcess.name}`;
+        status.innerText = "";
       }
     });
 
@@ -162,6 +164,7 @@
       if (input.files.length) {
         fileToProcess = input.files[0];
         fileNameDisplay.innerText = `📄 File selected: ${fileToProcess.name}`;
+        status.innerText = "";
       }
     });
 
@@ -174,13 +177,22 @@
     }
 
     function tokenize(text) {
-      return text.replace(/([.,!?\s])/g, ' $1 ').replace(/\s+/g, ' ').trim();
+      return text.replace(/([.,!?\\s])/g, ' $1 ').replace(/\s+/g, ' ').trim();
     }
 
     function processFile() {
       const file = fileToProcess;
       if (!file) {
-        status.innerHTML = "⚠️ Please select or drop a CSV file.";
+        status.innerText = "⚠️ Please select or drop a CSV file.";
+        status.className = "warning";
+        return;
+      }
+
+      const isAnyChecked = ['tokenize', 'normalize', 'deduplicate', 'diacritics']
+        .some(id => document.getElementById(id).checked);
+
+      if (!isAnyChecked) {
+        status.innerText = "⚠️ Please select at least one processing option.";
         status.className = "warning";
         return;
       }
@@ -204,7 +216,6 @@
           lines = Array.from(new Set(lines));
         }
 
-        const cleanedCount = lines.length;
         const cleaned = lines.join('\n');
         const blob = new Blob([cleaned], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
@@ -215,7 +226,7 @@
         a.click();
         document.body.removeChild(a);
 
-        status.innerHTML = `✅ Cleaned & downloaded!\nOriginal: ${originalCount} → Cleaned: ${cleanedCount}`;
+        status.innerText = `✅ Cleaned & downloaded!\nOriginal: ${originalCount} → Cleaned: ${lines.length}`;
         status.className = "success";
       };
       reader.readAsText(file);
