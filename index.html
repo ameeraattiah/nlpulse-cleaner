@@ -104,21 +104,23 @@
       display: none;
     }
     .drop-zone {
-      border: 2px dashed #2234dd;
-      border-radius: 10px;
-      padding: 1.2rem;
-      text-align: center;
-      background-color: rgba(255, 255, 255, 0.6);
-      color: #2234dd;
-      cursor: pointer;
-      margin-bottom: 1rem;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
       position: relative;
+      border: 2px dashed #2234dd;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      cursor: pointer;
+      border-radius: 0.5rem;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
     }
     
     .drop-zone.dragover {
-      background-color: rgba(34, 52, 221, 0.05);
-      border: 2px solid #2234dd;
+      background-color: #f0f4ff;
+      border-color: #1a3fe0;
+    }
+    
+    .drop-text {
+      color: #2234dd;
+      font-weight: 500;
     }
     
     #dropZone span#dropLabel {
@@ -146,12 +148,9 @@
     <h1>Clean Your Dataset</h1>
     <div id="dropZone" class="drop-zone">
       <span id="dropLabel">Choose or Drop File Here</span>
-      <span id="removeFile" style="display: none;">❌</span>
+      <button type="button" class="btn-close" aria-label="Close" onclick="removeFile()"></button>
       <input type="file" id="csvInput" accept=".csv, .tsv, .json, .txt, .xlsx" />
-    </div>
-
-    <div id="fileName"></div>
-    
+    </div>    
 
     <label style="font-weight: 600; color: #2234dd; display: block; margin-bottom: 0.5rem;"> Select the cleaning steps you'd like to apply:</label>
     <label class="select-all"><input type="checkbox" id="selectAll" /> Select All</label>
@@ -283,19 +282,12 @@
       dropZone.classList.remove('dragover');
     });
     
-    window.addEventListener('drop', (e) => {
+    dropZone.addEventListener('drop', (e) => {
       e.preventDefault();
       dropZone.classList.remove('dragover');
       if (e.dataTransfer.files.length) {
         fileToProcess = e.dataTransfer.files[0];
         input.files = e.dataTransfer.files;
-        updateDropZone();
-      }
-    });
-    
-    input.addEventListener('change', () => {
-      if (input.files.length) {
-        fileToProcess = input.files[0];
         updateDropZone();
       }
     });
@@ -309,9 +301,23 @@
     });
     
     function updateDropZone() {
-      dropLabel.textContent = fileToProcess.name;
-      removeFileBtn.style.display = "inline";
-    }
+  const dropText = document.getElementById('dropText');
+  const closeButton = document.querySelector('.btn-close');
+
+  if (fileToProcess) {
+    dropText.textContent = fileToProcess.name;
+    closeButton.style.display = 'block';
+  } else {
+    dropText.textContent = 'Choose or Drop File Here';
+    closeButton.style.display = 'none';
+  }
+}
+function removeFile() {
+  fileToProcess = null;
+  input.value = "";
+  updateDropZone();
+}
+
   </script>
 </body>
 </html>
