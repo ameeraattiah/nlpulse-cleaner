@@ -114,6 +114,8 @@
 
     <label class="select-all"><input type="checkbox" id="selectAll" /> Select All</label>
     <div class="checkbox-grid">
+      <label style="font-weight: 600; color: #2234dd; display: block; margin-bottom: 0.5rem;">Choose Output Format:</label>
+      <div class="btn-group" role="group" aria-label="Choose Output Format">
       <div class="column">
         <label><input type="checkbox" class="option" value="tokenization" /> Tokenization</label>
         <label><input type="checkbox" class="option" value="normalization" /> Normalization</label>
@@ -140,6 +142,9 @@
     
         <input type="radio" class="btn-check" name="outputFormat" id="formatTSV" value="tsv" autocomplete="off">
         <label class="btn btn-outline-primary" for="formatTSV">TSV</label>
+
+        <input type="radio" class="btn-check" name="outputFormat" id="formatXLSX" value="xlsx" autocomplete="off">
+        <label class="btn btn-outline-primary" for="formatXLSX">XLSX</label>
       </div>
     </div>
 
