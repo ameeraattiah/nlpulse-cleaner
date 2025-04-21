@@ -140,6 +140,13 @@
     input[type="file"] {
       display: none;
     }
+    .btn-close {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  display: none;
+}
+
 
   </style>
 </head>
@@ -269,7 +276,6 @@
     });
     const dropZone = document.getElementById('dropZone');
     const dropLabel = document.getElementById('dropLabel');
-    const removeFileBtn = document.getElementById('removeFile');
     
     dropZone.addEventListener('click', () => input.click());
     
@@ -299,19 +305,22 @@
       dropLabel.textContent = "Choose or Drop File Here";
       removeFileBtn.style.display = "none";
     });
-    
-    function updateDropZone() {
-  const dropText = document.getElementById('dropText');
+function updateDropZone() {
+  const dropLabel = document.getElementById('dropLabel');
+  const dropZone = document.getElementById('dropZone');
   const closeButton = document.querySelector('.btn-close');
 
   if (fileToProcess) {
-    dropText.textContent = fileToProcess.name;
+    dropLabel.textContent = fileToProcess.name;
+    dropZone.classList.add('dragover'); // ✅ highlight when uploaded
     closeButton.style.display = 'block';
   } else {
-    dropText.textContent = 'Choose or Drop File Here';
+    dropLabel.textContent = 'Choose or Drop File Here';
+    dropZone.classList.remove('dragover');
     closeButton.style.display = 'none';
   }
 }
+
 function removeFile() {
   fileToProcess = null;
   input.value = "";
