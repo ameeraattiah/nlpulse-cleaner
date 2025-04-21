@@ -9,7 +9,7 @@
       font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
-      background-image: url('assets/background.png'); /* Replace with your actual image path */
+      background-image: url('assets/background.png');
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -44,7 +44,7 @@
       border-radius: 1rem;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       text-align: center;
-      max-width: 500px;
+      max-width: 550px;
       width: 90%;
       z-index: 20;
     }
@@ -53,7 +53,14 @@
       font-size: 2rem;
       font-weight: 600;
       color: #2234dd;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    label.file-label {
+      color: #2234dd;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: underline;
     }
 
     input[type="file"] {
@@ -72,24 +79,22 @@
     }
 
     #status {
-      margin-top: 1.5rem;
+      margin-top: 1.2rem;
       font-weight: 500;
       white-space: pre-wrap;
     }
 
-    .success {
-      color: green;
-    }
+    .success { color: green; }
+    .warning { color: #d35400; }
 
-    .warning {
-      color: #d35400;
+    .options {
+      text-align: left;
+      margin-top: 1rem;
+      font-size: 0.95rem;
     }
-
-    .file-label {
-      color: #2234dd;
-      font-weight: 500;
-      cursor: pointer;
-      text-decoration: underline;
+    .options label {
+      display: block;
+      margin-bottom: 0.4rem;
     }
   </style>
 </head>
@@ -100,7 +105,14 @@
     <h1>🧼 Clean Your Dataset</h1>
     <label class="file-label" for="csvInput">Choose or Drop File</label>
     <input type="file" id="csvInput" accept=".csv" />
-    <br />
+
+    <div class="options">
+      <label><input type="checkbox" id="tokenize" checked /> Tokenization</label>
+      <label><input type="checkbox" id="normalize" checked /> Normalization</label>
+      <label><input type="checkbox" id="deduplicate" checked /> Deduplication</label>
+      <label><input type="checkbox" id="diacritics" checked /> Diacritization Handling</label>
+    </div>
+
     <button onclick="processFile()">Process and Download</button>
     <p id="status"></p>
   </div>
@@ -111,19 +123,14 @@
     const status = document.getElementById("status");
     let fileToProcess = null;
 
-    // Drag & Drop anywhere
-    window.addEventListener("dragover", (e) => {
+    window.addEventListener("dragover", e => {
       e.preventDefault();
       overlay.classList.add("active");
     });
-
-    window.addEventListener("dragleave", (e) => {
-      if (e.target === overlay || e.clientY === 0) {
-        overlay.classList.remove("active");
-      }
+    window.addEventListener("dragleave", e => {
+      if (e.clientY === 0) overlay.classList.remove("active");
     });
-
-    window.addEventListener("drop", (e) => {
+    window.addEventListener("drop", e => {
       e.preventDefault();
       overlay.classList.remove("active");
       if (e.dataTransfer.files.length) {
@@ -131,12 +138,8 @@
         processFile();
       }
     });
-
-    // If user chooses file manually
     input.addEventListener("change", () => {
-      if (input.files.length) {
-        fileToProcess = input.files[0];
-      }
+      if (input.files.length) fileToProcess = input.files[0];
     });
 
     function processFile() {
@@ -146,16 +149,31 @@
         status.className = "warning";
         return;
       }
+      const tokenize = document.getElementById("tokenize").checked;
+      const normalize = document.getElementById("normalize").checked;
+      const deduplicate = document.getElementById("deduplicate").checked;
+      const diacritics = document.getElementById("diacritics").checked;
 
       const reader = new FileReader();
       reader.onload = function (e) {
-        const text = e.target.result;
-        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+        let lines = e.target.result.split('\n').map(l => l.trim()).filter(Boolean);
         const originalCount = lines.length;
-        const unique = Array.from(new Set(lines));
-        const cleanedCount = unique.length;
 
-        const cleaned = unique.join('\n');
+        if (normalize) {
+          lines = lines.map(line => line.replace(/[إأآ]/g, 'ا').replace(/ى/g, 'ي'));
+        }
+        if (diacritics) {
+          lines = lines.map(line => line.replace(/[\u064B-\u0652]/g, ''));
+        }
+        if (deduplicate) {
+          lines = Array.from(new Set(lines));
+        }
+        // (Optional) Tokenization placeholder logic
+        if (tokenize) {
+          lines = lines.map(line => line.replace(/\s+/g, ' ').trim());
+        }
+
+        const cleaned = lines.join('\n');
         const blob = new Blob([cleaned], { type: 'text/csv' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -165,7 +183,7 @@
         a.click();
         document.body.removeChild(a);
 
-        status.innerHTML = `✅ Cleaned & downloaded!\nOriginal: ${originalCount} → Cleaned: ${cleanedCount}`;
+        status.innerHTML = `✅ Cleaned & downloaded!\nOriginal: ${originalCount} → Cleaned: ${lines.length}`;
         status.className = "success";
       };
       reader.readAsText(file);
