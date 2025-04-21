@@ -7,17 +7,35 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-image: url('assets/background.png'); /* Change to your correct image path */
+      margin: 0;
+      padding: 0;
+      background-image: url('assets/background.png'); /* Replace with your actual image path */
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      margin: 0;
-      padding: 0;
       height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #1b1b1b;
+      position: relative;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border: 4px dashed #2234dd;
+      background: rgba(255, 255, 255, 0.6);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #2234dd;
+    }
+
+    .overlay.active {
+      display: flex;
     }
 
     .card {
@@ -28,6 +46,7 @@
       text-align: center;
       max-width: 500px;
       width: 90%;
+      z-index: 20;
     }
 
     h1 {
@@ -37,20 +56,7 @@
       margin-bottom: 1.5rem;
     }
 
-    .drop-zone {
-      border: 2px dashed #2234dd;
-      border-radius: 0.5rem;
-      padding: 2rem;
-      cursor: pointer;
-      background-color: #f0f3ff;
-      transition: background 0.2s;
-    }
-
-    .drop-zone.dragover {
-      background-color: #dfe7ff;
-    }
-
-    .hidden {
+    input[type="file"] {
       display: none;
     }
 
@@ -78,57 +84,63 @@
     .warning {
       color: #d35400;
     }
+
+    .file-label {
+      color: #2234dd;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
+  <div class="overlay" id="overlay">Drop your CSV here</div>
+
   <div class="card">
     <h1>🧼 Clean Your Dataset</h1>
-
-    <div class="drop-zone" id="dropZone">
-      Drop your CSV file here or click to select
-      <input type="file" id="csvInput" accept=".csv" class="hidden" />
-    </div>
-
+    <label class="file-label" for="csvInput">Choose or Drop File</label>
+    <input type="file" id="csvInput" accept=".csv" />
+    <br />
     <button onclick="processFile()">Process and Download</button>
     <p id="status"></p>
   </div>
 
   <script>
-    const dropZone = document.getElementById("dropZone");
-    const fileInput = document.getElementById("csvInput");
-    let droppedFile = null;
+    const overlay = document.getElementById("overlay");
+    const input = document.getElementById("csvInput");
+    const status = document.getElementById("status");
+    let fileToProcess = null;
 
-    dropZone.addEventListener("click", () => fileInput.click());
-
-    dropZone.addEventListener("dragover", (e) => {
+    // Drag & Drop anywhere
+    window.addEventListener("dragover", (e) => {
       e.preventDefault();
-      dropZone.classList.add("dragover");
+      overlay.classList.add("active");
     });
 
-    dropZone.addEventListener("dragleave", () => {
-      dropZone.classList.remove("dragover");
-    });
-
-    dropZone.addEventListener("drop", (e) => {
-      e.preventDefault();
-      dropZone.classList.remove("dragover");
-      if (e.dataTransfer.files.length) {
-        droppedFile = e.dataTransfer.files[0];
-        dropZone.innerText = `File selected: ${droppedFile.name}`;
+    window.addEventListener("dragleave", (e) => {
+      if (e.target === overlay || e.clientY === 0) {
+        overlay.classList.remove("active");
       }
     });
 
-    fileInput.addEventListener("change", (e) => {
-      if (e.target.files.length) {
-        droppedFile = e.target.files[0];
-        dropZone.innerText = `File selected: ${droppedFile.name}`;
+    window.addEventListener("drop", (e) => {
+      e.preventDefault();
+      overlay.classList.remove("active");
+      if (e.dataTransfer.files.length) {
+        fileToProcess = e.dataTransfer.files[0];
+        processFile();
+      }
+    });
+
+    // If user chooses file manually
+    input.addEventListener("change", () => {
+      if (input.files.length) {
+        fileToProcess = input.files[0];
       }
     });
 
     function processFile() {
-      const file = droppedFile;
-      const status = document.getElementById("status");
-
+      const file = fileToProcess;
       if (!file) {
         status.innerHTML = "⚠️ Please select or drop a CSV file.";
         status.className = "warning";
