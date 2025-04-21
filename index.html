@@ -9,7 +9,7 @@
       font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
-      background-image: url('assets/background.png'); /* Replace with your background image path */
+      background-image: url('assets/background.png'); /* Replace with your background path */
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
@@ -39,7 +39,7 @@
     }
 
     .card {
-      background-color: rgba(255, 255, 255, 0.95);
+      background-color: rgba(255, 255, 255, 0.96);
       padding: 2rem;
       border-radius: 1rem;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -53,18 +53,6 @@
       font-size: 2rem;
       font-weight: 600;
       color: #2234dd;
-      margin-bottom: 1.2rem;
-    }
-
-    label {
-      display: block;
-      text-align: left;
-      margin: 0.4rem 0;
-      font-size: 1rem;
-    }
-
-    .checkboxes {
-      text-align: left;
       margin-bottom: 1rem;
     }
 
@@ -74,31 +62,57 @@
 
     .file-label {
       color: #2234dd;
-      font-weight: 500;
+      font-weight: 600;
       cursor: pointer;
       text-decoration: underline;
       display: inline-block;
+      margin-bottom: 1.2rem;
+    }
+
+    #filename {
       margin-bottom: 1rem;
+      color: #333;
+      font-size: 0.9rem;
+    }
+
+    .checkboxes {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin-top: 1rem;
+      margin-bottom: 1rem;
+      gap: 0.5rem;
+    }
+
+    .checkbox-group {
+      display: flex;
+      flex-direction: column;
+      width: 48%;
+      text-align: left;
+    }
+
+    .checkbox-group label {
+      margin: 4px 0;
+    }
+
+    #selectAllContainer {
+      margin-bottom: 1rem;
+      text-align: left;
+      font-weight: bold;
     }
 
     button {
       background-color: #2234dd;
       color: white;
-      padding: 0.6rem 1.2rem;
+      padding: 0.6rem 1.4rem;
       border: none;
       border-radius: 0.5rem;
       font-size: 1rem;
       cursor: pointer;
-      margin-top: 1rem;
-    }
-
-    button:disabled {
-      background-color: #ccc;
-      cursor: not-allowed;
     }
 
     #status {
-      margin-top: 1.5rem;
+      margin-top: 1.2rem;
       font-weight: 500;
       white-space: pre-wrap;
     }
@@ -109,12 +123,6 @@
 
     .warning {
       color: #d35400;
-    }
-
-    #filename {
-      font-size: 0.9rem;
-      color: #555;
-      margin-top: 0.5rem;
     }
   </style>
 </head>
@@ -128,17 +136,24 @@
     <input type="file" id="csvInput" accept=".csv" />
     <div id="filename"></div>
 
+    <div id="selectAllContainer">
+      <label><input type="checkbox" id="selectAll" /> Select All Services</label>
+    </div>
+
     <div class="checkboxes">
-      <label><input type="checkbox" id="selectAll" /> Select All</label>
-      <label><input type="checkbox" class="option" value="tokenization" /> Tokenization</label>
-      <label><input type="checkbox" class="option" value="normalization" /> Normalization</label>
-      <label><input type="checkbox" class="option" value="deduplication" /> Deduplication</label>
-      <label><input type="checkbox" class="option" value="diacritics" /> Diacritization Handling</label>
-      <label><input type="checkbox" disabled /> Academic Filtering (Coming Soon)</label>
-      <label><input type="checkbox" class="option" value="blocklist" /> Blocklist Filtering</label>
-      <label><input type="checkbox" class="option" value="language" /> Language Detection</label>
-      <label><input type="checkbox" class="option" value="html" /> HTML Cleaning</label>
-      <label><input type="checkbox" class="option" value="noise" /> Noise Removal</label>
+      <div class="checkbox-group">
+        <label><input type="checkbox" class="option" value="tokenization" /> Tokenization</label>
+        <label><input type="checkbox" class="option" value="normalization" /> Normalization</label>
+        <label><input type="checkbox" class="option" value="deduplication" /> Deduplication</label>
+        <label><input type="checkbox" class="option" value="diacritics" /> Diacritization Handling</label>
+        <label><input type="checkbox" disabled /> Academic Filtering (Coming Soon)</label>
+      </div>
+      <div class="checkbox-group">
+        <label><input type="checkbox" class="option" value="blocklist" /> Blocklist Filtering</label>
+        <label><input type="checkbox" class="option" value="language" /> Language Detection</label>
+        <label><input type="checkbox" class="option" value="html" /> HTML Cleaning</label>
+        <label><input type="checkbox" class="option" value="noise" /> Noise Removal</label>
+      </div>
     </div>
 
     <button onclick="processFile()">Process</button>
@@ -155,7 +170,6 @@
 
     let fileToProcess = null;
 
-    // Drag & Drop
     window.addEventListener("dragover", (e) => {
       e.preventDefault();
       overlay.classList.add("active");
@@ -176,7 +190,6 @@
       }
     });
 
-    // Manual input
     input.addEventListener("change", () => {
       if (input.files.length) {
         fileToProcess = input.files[0];
@@ -184,7 +197,6 @@
       }
     });
 
-    // Select All
     selectAll.addEventListener("change", () => {
       checkboxes.forEach(cb => cb.checked = selectAll.checked);
     });
@@ -198,7 +210,7 @@
 
       const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
       if (selected.length === 0) {
-        status.textContent = "⚠️ Please select at least one service to apply.";
+        status.textContent = "⚠️ Please select at least one service.";
         status.className = "warning";
         return;
       }
@@ -208,7 +220,6 @@
         let lines = e.target.result.split('\n').map(l => l.trim()).filter(Boolean);
         const originalCount = lines.length;
 
-        // Simulated Services
         if (selected.includes("deduplication")) {
           lines = Array.from(new Set(lines));
         }
@@ -218,9 +229,6 @@
         if (selected.includes("noise")) {
           lines = lines.map(l => l.replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, "").replace(/\s+/g, " ").trim());
         }
-
-        // Fake tokenization/normalization/others (demo only)
-        // Add your actual cleaning logic here as needed
 
         const cleaned = lines.join('\n');
         const cleanedCount = lines.length;
