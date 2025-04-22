@@ -165,6 +165,10 @@
     </div>
 
     <button onclick="processFile()">Process</button>
+    <div id="spinner" class="spinner-border text-primary" role="status" style="display: none;">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+
     <p id="status"></p>
   </div>
 
@@ -266,11 +270,26 @@
       selected.forEach(opt => formData.append('options[]', opt));
       formData.append('format', format);
 
+      // 👉 Show spinner and clear status
+      document.getElementById('spinner').style.display = 'inline-block';
+      status.textContent = '';
+      status.className = '';
+
+
       fetch('https://nlpulse-cleaner-backend.onrender.com/process', {
         method: 'POST',
         body: formData
       })
-      .then(response => response.blob())
+      .then(async response => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          status.textContent = `❌ ${errorData.error || "Unknown error"}`;
+          status.className = "warning";
+          return;
+        }
+        return response.blob();
+      })
+
       .then(blob => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
