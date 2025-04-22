@@ -21,7 +21,7 @@
       transition: background-color 0.3s ease;
     }
 
-    body.dragging {
+    .drag-active {
       background-color: rgba(0, 0, 0, 0.1);
     }
 
@@ -35,27 +35,21 @@
       width: 95%;
     }
 
-    h1 {
-      font-size: 1.8rem;
-      font-weight: 700;
-      color: #2234dd;
-      margin-bottom: 1rem;
-    }
-
     .drop-zone {
       position: relative;
       border: 2px dashed #2234dd;
       padding: 1rem;
       margin-bottom: 1.5rem;
       border-radius: 0.5rem;
-      transition: background-color 0.3s ease, border-color 0.3s ease;
       cursor: pointer;
+      transition: background-color 0.3s ease, border-color 0.3s ease;
     }
 
-    .drop-zone.highlight {
+    .drop-zone.highlight, .drop-zone.filled {
       background-color: #f0f4ff;
       border-color: #1a3fe0;
     }
+
     .drop-zone span {
       font-weight: 500;
       font-size: 0.95rem;
@@ -172,9 +166,9 @@
     const dropZone = document.getElementById('dropZone');
     const dropLabel = document.getElementById('dropLabel');
     const removeBtn = document.getElementById('removeFile');
-    const status = document.getElementById("status");
     const checkboxes = document.querySelectorAll('.option');
     const selectAll = document.getElementById('selectAll');
+    const status = document.getElementById('status');
     let fileToProcess = null;
 
     input.addEventListener("change", () => {
@@ -189,18 +183,18 @@
     dropZone.addEventListener('dragover', (e) => {
       e.preventDefault();
       dropZone.classList.add('highlight');
-      document.body.classList.add('dragging');
+      document.body.classList.add('drag-active');
     });
 
     dropZone.addEventListener('dragleave', () => {
       dropZone.classList.remove('highlight');
-      document.body.classList.remove('dragging');
+      document.body.classList.remove('drag-active');
     });
 
     dropZone.addEventListener('drop', (e) => {
       e.preventDefault();
       dropZone.classList.remove('highlight');
-      document.body.classList.remove('dragging');
+      document.body.classList.remove('drag-active');
       if (e.dataTransfer.files.length) {
         fileToProcess = e.dataTransfer.files[0];
         input.files = e.dataTransfer.files;
@@ -208,22 +202,18 @@
       }
     });
 
-    document.body.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      document.body.classList.add('dragging');
-    });
-
-    document.body.addEventListener('dragleave', () => {
-      document.body.classList.remove('dragging');
-    });
+    document.body.addEventListener('dragover', (e) => e.preventDefault());
+    document.body.addEventListener('drop', (e) => e.preventDefault());
 
     function updateDropBox() {
       if (fileToProcess) {
         dropLabel.textContent = fileToProcess.name;
         removeBtn.style.display = "block";
+        dropZone.classList.add('filled');
       } else {
         dropLabel.textContent = "Choose or Drop File Here";
         removeBtn.style.display = "none";
+        dropZone.classList.remove('filled');
       }
     }
 
@@ -264,23 +254,23 @@
         method: 'POST',
         body: formData
       })
-        .then(response => response.blob())
-        .then(blob => {
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `processed.${format}`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          status.textContent = `✅ Cleaned & downloaded!`;
-          status.className = "success";
-        })
-        .catch(err => {
-          status.textContent = "❌ Error processing the file.";
-          status.className = "warning";
-          console.error(err);
-        });
+      .then(response => response.blob())
+      .then(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `processed.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        status.textContent = `✅ Cleaned & downloaded!`;
+        status.className = "success";
+      })
+      .catch(err => {
+        status.textContent = "❌ Error processing the file.";
+        status.className = "warning";
+        console.error(err);
+      });
     }
   </script>
 </body>
