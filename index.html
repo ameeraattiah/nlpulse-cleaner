@@ -191,16 +191,18 @@
       document.body.classList.remove('drag-active');
     });
 
-    dropZone.addEventListener('drop', (e) => {
+    document.body.addEventListener('drop', (e) => {
       e.preventDefault();
-      dropZone.classList.remove('highlight');
       document.body.classList.remove('drag-active');
+      dropZone.classList.remove('highlight');
+    
       if (e.dataTransfer.files.length) {
         fileToProcess = e.dataTransfer.files[0];
         input.files = e.dataTransfer.files;
         updateDropBox();
       }
     });
+
 
     document.body.addEventListener('dragover', (e) => e.preventDefault());
     document.body.addEventListener('drop', (e) => {
