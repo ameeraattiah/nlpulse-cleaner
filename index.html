@@ -203,7 +203,14 @@
     });
 
     document.body.addEventListener('dragover', (e) => e.preventDefault());
-    document.body.addEventListener('drop', (e) => e.preventDefault());
+    document.body.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer.files.length) {
+        fileToProcess = e.dataTransfer.files[0];
+        input.files = e.dataTransfer.files;
+        updateDropBox();
+      }
+    });
 
     function updateDropBox() {
       if (fileToProcess) {
