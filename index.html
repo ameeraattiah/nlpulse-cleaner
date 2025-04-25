@@ -6,46 +6,84 @@
   <title>NLPulse Cleaner - Arabic Dataset Cleaning</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       background-color: #F1F7EE;
       font-family: 'Inter', sans-serif;
-      margin: 0;
-      padding: 0;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-      overflow-x: hidden;
     }
 
-    header {
+    nav {
+      background-color: #5A7261;
+      width: 100%;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    nav .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: opacity 0.3s;
+    }
+
+    nav .nav-links a:hover {
+      opacity: 0.8;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
       padding: 2rem;
     }
 
     h1 {
       font-size: 3rem;
       color: #627357;
-      margin-bottom: 0.5rem;
+      margin-bottom: 1rem;
     }
 
     p {
       font-size: 1.3rem;
       color: #6a7a5d;
       margin-bottom: 2rem;
-      max-width: 650px;
+      max-width: 600px;
     }
 
     a.button {
       background-color: #627357;
       color: white;
       text-decoration: none;
-      font-size: 1.1rem;
-      padding: 0.8rem 2.5rem;
+      padding: 0.8rem 2rem;
       border-radius: 8px;
       font-weight: bold;
-      transition: background 0.3s ease, transform 0.2s ease;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
     a.button:hover {
@@ -53,69 +91,31 @@
       transform: translateY(-2px);
     }
 
-    .hero-img {
-      width: 90%;
-      max-width: 600px;
-      margin-top: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
-    }
-
     footer {
-      margin-top: auto;
       padding: 1rem;
+      text-align: center;
       font-size: 0.9rem;
       color: #8d9d7f;
     }
   </style>
 </head>
 <body>
-<nav style="background-color: #5A7261; padding: 1rem; display: flex; justify-content: space-between; align-items: center; font-family: 'Inter', sans-serif;">
-  <div style="color: white; font-size: 1.5rem; font-weight: bold;">NLPulse Cleaner</div>
-  <div id="nav-links" style="display: flex; gap: 1rem;">
-    <!-- Dynamic links inserted by JavaScript -->
-  </div>
-</nav>
-  <header>
-    <h1>NLPulse Cleaner</h1>
-    <p>Specialized in Arabic dataset cleaning and processing.  
-    Normalize, deduplicate, clean noise, and prepare your Arabic text datasets for any NLP project — easily and efficiently.</p>
-    <a class="button" href="login.html">Get Started</a>
-  </header>
 
-  <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=900&q=80" alt="Arabic data cleaning illustration" class="hero-img">
-  <script type="module">
-    import { auth, signOut } from './firebase.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
-  
-    const navLinks = document.getElementById('nav-links');
-  
-    function renderNav(isLoggedIn) {
-      if (isLoggedIn) {
-        navLinks.innerHTML = `
-          <a href="dashboard.html" style="color: white; text-decoration: none;">Dashboard</a>
-          <a href="upload.html" style="color: white; text-decoration: none;">Upload</a>
-          <a href="preview.html" style="color: white; text-decoration: none;">Preview</a>
-          <a href="#" onclick="logout()" style="color: white; text-decoration: none;">Logout</a>
-        `;
-      } else {
-        navLinks.innerHTML = `
-          <a href="login.html" style="color: white; text-decoration: none;">Login</a>
-          <a href="signup.html" style="color: white; text-decoration: none;">Signup</a>
-        `;
-      }
-    }
-  
-    function logout() {
-      signOut(auth).then(() => {
-        window.location.href = "login.html";
-      });
-    }
-  
-    onAuthStateChanged(auth, (user) => {
-      renderNav(!!user);
-    });
-  </script>
+  <nav>
+    <a href="index.html" class="logo">NLPulse Cleaner</a>
+    <div class="nav-links">
+      <a href="login.html">Login</a>
+      <a href="signup.html">Signup</a>
+    </div>
+  </nav>
+
+  <main>
+    <h1>Arabic Dataset Cleaning, Made Simple</h1>
+    <p>Specialized in cleaning, normalizing, and enhancing Arabic datasets for your NLP projects.  
+    Upload your data and experience effortless processing today.</p>
+    <a class="button" href="login.html">Get Started</a>
+  </main>
+
   <footer>
     © 2025 NLPulse Cleaner. All rights reserved.
   </footer>
