@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Upload Dataset - NLPulse Cleaner</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <script type="module" src="./firebase.js"></script>
@@ -69,34 +69,49 @@
     }
 
     .upload-box {
-      background: white;
+      border: 2px dashed #b5c7b3;
       padding: 2rem;
+      text-align: center;
       border-radius: 1rem;
-      box-shadow: 0px 8px 20px rgba(0,0,0,0.1);
-      width: 100%;
+      background: white;
+      transition: border-color 0.3s;
+      cursor: pointer;
+      margin-bottom: 2rem;
       max-width: 500px;
+      width: 100%;
+    }
+
+    .upload-box.drag-over {
+      border-color: #627357;
+      background-color: #f9fcf7;
     }
 
     .upload-box input[type="file"] {
-      display: block;
-      margin: 1rem auto;
+      display: none;
     }
 
-    .checkbox-grid {
+    .option-buttons {
       display: flex;
       flex-wrap: wrap;
       gap: 1rem;
       justify-content: center;
-      margin-top: 1rem;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
     }
 
-    .checkbox-grid label {
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-size: 1rem;
-      color: #5c6d5a;
+    .option-btn {
+      padding: 0.8rem 1.5rem;
+      border: 2px solid #627357;
+      border-radius: 0.5rem;
+      background: white;
+      color: #627357;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .option-btn.active {
+      background-color: #627357;
+      color: white;
     }
 
     button {
@@ -114,82 +129,34 @@
       background-color: #55684d;
     }
 
+    #status {
+      margin-top: 1rem;
+      color: #5c6d5a;
+    }
+
     footer {
       padding: 1rem;
       text-align: center;
       font-size: 0.9rem;
       color: #8d9d7f;
     }
-
-    #status {
-      margin-top: 1rem;
-      color: #5c6d5a;
-    }
-    .upload-box {
-      border: 2px dashed #b5c7b3;
-      padding: 2rem;
-      text-align: center;
-      border-radius: 1rem;
-      background: white;
-      transition: border-color 0.3s;
-      cursor: pointer;
-      margin-bottom: 2rem;
-      max-width: 500px;
-      width: 100%;
-    }
-    
-    .upload-box.drag-over {
-      border-color: #627357;
-      background-color: #f9fcf7;
-    }
-    
-    .upload-box input[type="file"] {
-      display: none;
-    }
-    
-    .option-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-    }
-    
-    .option-btn {
-      padding: 0.8rem 1.5rem;
-      border: 2px solid #627357;
-      border-radius: 0.5rem;
-      background: white;
-      color: #627357;
-      font-weight: bold;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .option-btn.active {
-      background-color: #627357;
-      color: white;
-    }
-
   </style>
 </head>
 <body>
 
   <nav>
     <a href="index.html" class="logo">NLPulse Cleaner</a>
-    <div class="nav-links" id="nav-links">
-      <!-- Auth links injected here -->
-    </div>
+    <div class="nav-links" id="nav-links"></div>
   </nav>
 
   <main>
     <h2>Upload Your Arabic Dataset</h2>
-  
+
     <div class="upload-box" id="dropZone">
       <p id="dropText">📁 Drop your file here or click to upload</p>
       <input type="file" id="fileInput" accept=".csv,.json,.tsv,.xlsx" />
     </div>
-  
+
     <div class="option-buttons">
       <button class="option-btn" data-value="tokenization">Tokenization</button>
       <button class="option-btn" data-value="normalization">Normalization</button>
@@ -200,11 +167,10 @@
       <button class="option-btn" data-value="html">HTML Cleaning</button>
       <button class="option-btn" data-value="noise">Noise Removal</button>
     </div>
-  
+
     <button id="uploadBtn">Process Dataset</button>
     <p id="status"></p>
   </main>
-
 
   <footer>
     © 2025 NLPulse Cleaner. All rights reserved.
@@ -214,16 +180,15 @@
     import { auth } from './firebase.js';
     import { signOut } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
-  
+
     const fileInput = document.getElementById('fileInput');
     const dropZone = document.getElementById('dropZone');
     const dropText = document.getElementById('dropText');
     const uploadBtn = document.getElementById('uploadBtn');
     const status = document.getElementById('status');
-  
     const selectedOptions = new Set();
-  
-    // Drag & drop logic
+
+    // Drag & Drop
     dropZone.addEventListener('click', () => fileInput.click());
     dropZone.addEventListener('dragover', e => {
       e.preventDefault();
@@ -244,8 +209,8 @@
         dropText.textContent = `📄 ${fileInput.files[0].name}`;
       }
     });
-  
-    // Toggle button behavior
+
+    // Button toggle logic
     document.querySelectorAll('.option-btn').forEach(btn => {
       btn.addEventListener('click', () => {
         const value = btn.dataset.value;
@@ -258,11 +223,10 @@
         }
       });
     });
-  
-    // Upload logic
+
+    // Upload & Download
     uploadBtn.addEventListener('click', async () => {
       status.textContent = "";
-  
       const file = fileInput.files[0];
       if (!file) {
         status.textContent = "⚠️ Please select a file.";
@@ -272,68 +236,58 @@
         status.textContent = "⚠️ Please select at least one cleaning option.";
         return;
       }
-  
+
       const formData = new FormData();
       formData.append('file', file);
       selectedOptions.forEach(opt => formData.append('options[]', opt));
       formData.append('format', 'csv');
-  
       status.textContent = "⏳ Processing...";
-  
+
       try {
         const res = await fetch('https://nlpulse-cleaner-backend.onrender.com/process', {
           method: 'POST',
           body: formData
         });
-  
+
         if (!res.ok) {
           const error = await res.json();
           status.textContent = `❌ ${error.error || "Processing failed."}`;
           return;
         }
-  
+
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
-  
-        // Save for preview
-        localStorage.setItem('latestDataset', url);
-        const history = JSON.parse(localStorage.getItem('datasetHistory') || '[]');
-        history.push({ filename: file.name, date: new Date().toLocaleString() });
-        localStorage.setItem('datasetHistory', JSON.stringify(history));
-  
-      // Download automatically
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'processed_dataset.csv';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      
-      // Save for preview
-      localStorage.setItem('latestDataset', url);
-      const history = JSON.parse(localStorage.getItem('datasetHistory') || '[]');
-      history.push({ filename: file.name, date: new Date().toLocaleString() });
-      localStorage.setItem('datasetHistory', JSON.stringify(history));
-      
-      // Now go to preview
-      setTimeout(() => {
-        window.location.href = "preview.html";
-      }, 500);
 
-  
+        // Download immediately
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'processed_dataset.csv';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        // Store in localStorage for preview
+        localStorage.setItem('latestDataset', url);
+        const datasetHistory = JSON.parse(localStorage.getItem('datasetHistory') || '[]');
+        datasetHistory.push({ filename: file.name, date: new Date().toLocaleString() });
+        localStorage.setItem('datasetHistory', JSON.stringify(datasetHistory));
+
+        // Redirect to preview
+        setTimeout(() => {
+          window.location.href = "preview.html";
+        }, 500);
+
       } catch (err) {
         console.error(err);
         status.textContent = "❌ Error processing the dataset.";
       }
     });
-  
-    // Auth protection
+
+    // Protect the page: force login
     onAuthStateChanged(auth, user => {
       if (!user) window.location.href = "login.html";
     });
   </script>
 
-
 </body>
 </html>
-
