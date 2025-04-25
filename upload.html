@@ -163,84 +163,147 @@
     © 2025 NLPulse Cleaner. All rights reserved.
   </footer>
 
-  <script type="module">
-    import { auth, signOut } from './firebase.js';
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+  <script>
+    const input = document.getElementById('csvInput');
+    const dropZone = document.getElementById('dropZone');
+    const dropLabel = document.getElementById('dropLabel');
+    const removeBtn = document.getElementById('removeFile');
+    const checkboxes = document.querySelectorAll('.option');
+    const selectAll = document.getElementById('selectAll');
+    const status = document.getElementById('status');
+    let fileToProcess = null;
 
-    const navLinks = document.getElementById('nav-links');
+    input.addEventListener("change", () => {
+      if (input.files.length) {
+        fileToProcess = input.files[0];
+        updateDropBox();
+      }
+    });
 
-    function renderNav(isLoggedIn) {
-      if (isLoggedIn) {
-        navLinks.innerHTML = `
-          <a href="dashboard.html">Dashboard</a>
-          <a href="upload.html">Upload</a>
-          <a href="preview.html">Preview</a>
-          <a href="#" onclick="logout()">Logout</a>
-        `;
+    dropZone.addEventListener('click', () => input.click());
+
+    dropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropZone.classList.add('highlight');
+      document.body.classList.add('drag-active');
+    });
+
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('highlight');
+      document.body.classList.remove('drag-active');
+    });
+
+    document.body.addEventListener('drop', (e) => {
+      e.preventDefault();
+      document.body.classList.remove('drag-active');
+      dropZone.classList.remove('highlight');
+    
+      if (e.dataTransfer.files.length) {
+        fileToProcess = e.dataTransfer.files[0];
+        input.files = e.dataTransfer.files;
+        updateDropBox();
+      }
+    });
+
+
+    document.body.addEventListener('dragover', (e) => e.preventDefault());
+    document.body.addEventListener('drop', (e) => {
+      e.preventDefault();
+      if (e.dataTransfer.files.length) {
+        fileToProcess = e.dataTransfer.files[0];
+        input.files = e.dataTransfer.files;
+        updateDropBox();
+      }
+    });
+
+    function updateDropBox() {
+      if (fileToProcess) {
+        dropLabel.textContent = fileToProcess.name;
+        removeBtn.style.display = "block";
+        dropZone.classList.add('filled');
       } else {
-        window.location.href = "login.html";
+        dropLabel.textContent = "Choose or Drop File Here";
+        removeBtn.style.display = "none";
+        dropZone.classList.remove('filled');
       }
     }
 
-    function logout() {
-      signOut(auth).then(() => {
-        window.location.href = "login.html";
-      });
+    function removeFile() {
+      fileToProcess = null;
+      input.value = "";
+      updateDropBox();
     }
 
-    onAuthStateChanged(auth, (user) => {
-      renderNav(!!user);
+    selectAll.addEventListener('change', () => {
+      checkboxes.forEach(cb => {
+        if (!cb.disabled) cb.checked = selectAll.checked;
+      });
     });
 
-    // Upload button action
-    document.getElementById('uploadBtn').addEventListener('click', async () => {
-      const fileInput = document.getElementById('fileInput');
-      const checkboxes = document.querySelectorAll('.checkbox-grid input:checked');
-      const status = document.getElementById('status');
-
-      if (!fileInput.files.length) {
+    function processFile() {
+      const selected = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.value);
+      const format = document.querySelector('input[name="outputFormat"]:checked').value;
+      document.getElementById('spinnerContainer').style.display = 'flex';
+      
+      if (!fileToProcess) {
         status.textContent = "⚠️ Please upload a file.";
+        status.className = "warning";
+        document.getElementById('spinnerContainer').style.display = 'none'; 
         return;
       }
 
-      if (checkboxes.length === 0) {
-        status.textContent = "⚠️ Please select at least one cleaning option.";
+      if (selected.length === 0) {
+        status.textContent = "⚠️ Please select at least one processing option.";
+        status.className = "warning";
+        document.getElementById('spinnerContainer').style.display = 'none'; 
         return;
       }
 
       const formData = new FormData();
-      formData.append('file', fileInput.files[0]);
-      checkboxes.forEach(cb => formData.append('options[]', cb.value));
-      formData.append('format', 'csv'); // default output for now
+      formData.append('file', fileToProcess);
+      selected.forEach(opt => formData.append('options[]', opt));
+      formData.append('format', format);
 
-      status.textContent = "⏳ Processing...";
+      // 👉 Show spinner and clear status
+      status.textContent = '';
+      status.className = '';
 
-      try {
-        const response = await fetch('https://nlpulse-cleaner-backend.onrender.com/process', {
-          method: 'POST',
-          body: formData
-        });
 
-        if (!response.ok) throw new Error("Upload failed");
+      fetch('https://nlpulse-cleaner-backend.onrender.com/process', {
+        method: 'POST',
+        body: formData
+      })
+      .then(async response => {
+        if (!response.ok) {
+          const errorData = await response.json();
+          status.textContent = `❌ ${errorData.error || "Unknown error"}`;
+          status.className = "warning";
+          return;
+        }
+        return response.blob();
+      })
 
-        const blob = await response.blob();
+      .then(blob => {
         const url = URL.createObjectURL(blob);
-        localStorage.setItem('latestDataset', url);
-
-        const filename = `processed.csv`;
-        const history = JSON.parse(localStorage.getItem('datasetHistory') || '[]');
-        history.push({ filename, date: new Date().toLocaleString() });
-        localStorage.setItem('datasetHistory', JSON.stringify(history));
-
-        window.location.href = "preview.html";
-
-      } catch (error) {
-        console.error(error);
-        status.textContent = "❌ Failed to process the dataset.";
-      }
-    });
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `processed.${format}`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        status.textContent = `✅ Cleaned & downloaded!`;
+        status.className = "success";
+        document.getElementById('spinnerContainer').style.display = 'none'; 
+        
+      })
+      .catch(err => {
+        status.textContent = "❌ Error processing the file.";
+        status.className = "warning";
+        console.error(err);
+        document.getElementById('spinnerContainer').style.display = 'none'; 
+      });
+    }
   </script>
-
 </body>
 </html>
 
