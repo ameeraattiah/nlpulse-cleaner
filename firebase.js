@@ -10,14 +10,15 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
 
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyDtqyEtQhESMTbbWnyZMncjryL451s6sI",
+  apiKey: "AIzaSyDtqyEQIhESMTbbW0nyZMmCjrLy451s6sI",
   authDomain: "nlpulse-c22af.firebaseapp.com",
   projectId: "nlpulse-c22af",
-  storageBucket: "nlpulse-c22af.appspot.com",
+  storageBucket: "nlpulse-c22af.firebasestorage.app",
   messagingSenderId: "562893359272",
   appId: "1:562893359272:web:2d3d85b8905baa3c3eda9d",
-  measurementId: "G-TB62EJWRWR"
+  measurementId: "G-T7862EJRWR"
 };
 
 const app = initializeApp(firebaseConfig);
