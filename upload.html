@@ -125,6 +125,52 @@
       margin-top: 1rem;
       color: #5c6d5a;
     }
+    .upload-box {
+      border: 2px dashed #b5c7b3;
+      padding: 2rem;
+      text-align: center;
+      border-radius: 1rem;
+      background: white;
+      transition: border-color 0.3s;
+      cursor: pointer;
+      margin-bottom: 2rem;
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .upload-box.drag-over {
+      border-color: #627357;
+      background-color: #f9fcf7;
+    }
+    
+    .upload-box input[type="file"] {
+      display: none;
+    }
+    
+    .option-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    
+    .option-btn {
+      padding: 0.8rem 1.5rem;
+      border: 2px solid #627357;
+      border-radius: 0.5rem;
+      background: white;
+      color: #627357;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .option-btn.active {
+      background-color: #627357;
+      color: white;
+    }
+
   </style>
 </head>
 <body>
@@ -138,115 +184,137 @@
 
   <main>
     <h2>Upload Your Arabic Dataset</h2>
-
-    <div class="upload-box">
-      <input type="file" id="fileInput" accept=".csv,.json,.tsv,.xlsx">
-      
-      <div class="checkbox-grid">
-        <label><input type="checkbox" value="tokenization" /> Tokenization</label>
-        <label><input type="checkbox" value="normalization" /> Normalization</label>
-        <label><input type="checkbox" value="deduplication" /> Deduplication</label>
-        <label><input type="checkbox" value="diacritics" /> Diacritization Handling</label>
-        <label><input type="checkbox" value="blocklist" /> Blocklist Filtering</label>
-        <label><input type="checkbox" value="language" /> Language Detection</label>
-        <label><input type="checkbox" value="html" /> HTML Cleaning</label>
-        <label><input type="checkbox" value="noise" /> Noise Removal</label>
-      </div>
-
-      <button id="uploadBtn">Process Dataset</button>
-
-      <p id="status"></p>
+  
+    <div class="upload-box" id="dropZone">
+      <p id="dropText">📁 Drop your file here or click to upload</p>
+      <input type="file" id="fileInput" accept=".csv,.json,.tsv,.xlsx" />
     </div>
+  
+    <div class="option-buttons">
+      <button class="option-btn" data-value="tokenization">Tokenization</button>
+      <button class="option-btn" data-value="normalization">Normalization</button>
+      <button class="option-btn" data-value="deduplication">Deduplication</button>
+      <button class="option-btn" data-value="diacritics">Diacritics</button>
+      <button class="option-btn" data-value="blocklist">Blocklist</button>
+      <button class="option-btn" data-value="language">Language Detection</button>
+      <button class="option-btn" data-value="html">HTML Cleaning</button>
+      <button class="option-btn" data-value="noise">Noise Removal</button>
+    </div>
+  
+    <button id="uploadBtn">Process Dataset</button>
+    <p id="status"></p>
   </main>
+
 
   <footer>
     © 2025 NLPulse Cleaner. All rights reserved.
   </footer>
 
-<script type="module">
-  import { auth } from './firebase.js';
-  import { signOut } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
-
-  import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
-
-  const navLinks = document.getElementById('nav-links');
-
-  function renderNav(isLoggedIn) {
-    if (isLoggedIn) {
-      navLinks.innerHTML = `
-        <a href="dashboard.html">Dashboard</a>
-        <a href="upload.html">Upload</a>
-        <a href="preview.html">Preview</a>
-        <a href="#" onclick="logout()">Logout</a>
-      `;
-    } else {
-      window.location.href = "login.html";
-    }
-  }
-
-  function logout() {
-    signOut(auth).then(() => {
-      window.location.href = "login.html";
-    });
-  }
-
-  onAuthStateChanged(auth, (user) => {
-    renderNav(!!user);
-  });
-
-  // Upload logic
-  document.getElementById('uploadBtn').addEventListener('click', async () => {
-    console.log("🟢 Upload button clicked!");
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { signOut } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+  
     const fileInput = document.getElementById('fileInput');
-    const checkboxes = document.querySelectorAll('.checkbox-grid input:checked');
+    const dropZone = document.getElementById('dropZone');
+    const dropText = document.getElementById('dropText');
+    const uploadBtn = document.getElementById('uploadBtn');
     const status = document.getElementById('status');
-
-    if (!fileInput.files.length) {
-      status.textContent = "⚠️ Please upload a file.";
-      return;
-    }
-
-    if (checkboxes.length === 0) {
-      status.textContent = "⚠️ Please select at least one cleaning option.";
-      return;
-    }
-
-    const formData = new FormData();
-    formData.append('file', fileInput.files[0]);
-    checkboxes.forEach(cb => formData.append('options[]', cb.value));
-    formData.append('format', 'csv'); // default output format
-
-    status.textContent = "⏳ Processing...";
-
-    try {
-      const response = await fetch('https://nlpulse-cleaner-backend.onrender.com/process', {
-        method: 'POST',
-        body: formData
+  
+    const selectedOptions = new Set();
+  
+    // Drag & drop logic
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        fileInput.files = e.dataTransfer.files;
+        dropText.textContent = `📄 ${file.name}`;
+      }
+    });
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        dropText.textContent = `📄 ${fileInput.files[0].name}`;
+      }
+    });
+  
+    // Toggle button behavior
+    document.querySelectorAll('.option-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const value = btn.dataset.value;
+        if (selectedOptions.has(value)) {
+          selectedOptions.delete(value);
+          btn.classList.remove('active');
+        } else {
+          selectedOptions.add(value);
+          btn.classList.add('active');
+        }
       });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        status.textContent = `❌ ${errorData.error || "Unknown error"}`;
+    });
+  
+    // Upload logic
+    uploadBtn.addEventListener('click', async () => {
+      status.textContent = "";
+  
+      const file = fileInput.files[0];
+      if (!file) {
+        status.textContent = "⚠️ Please select a file.";
         return;
       }
+      if (selectedOptions.size === 0) {
+        status.textContent = "⚠️ Please select at least one cleaning option.";
+        return;
+      }
+  
+      const formData = new FormData();
+      formData.append('file', file);
+      selectedOptions.forEach(opt => formData.append('options[]', opt));
+      formData.append('format', 'csv');
+  
+      status.textContent = "⏳ Processing...";
+  
+      try {
+        const res = await fetch('https://nlpulse-cleaner-backend.onrender.com/process', {
+          method: 'POST',
+          body: formData
+        });
+  
+        if (!res.ok) {
+          const error = await res.json();
+          status.textContent = `❌ ${error.error || "Processing failed."}`;
+          return;
+        }
+  
+        const blob = await res.blob();
+        const url = URL.createObjectURL(blob);
+  
+        // Save for preview
+        localStorage.setItem('latestDataset', url);
+        const history = JSON.parse(localStorage.getItem('datasetHistory') || '[]');
+        history.push({ filename: file.name, date: new Date().toLocaleString() });
+        localStorage.setItem('datasetHistory', JSON.stringify(history));
+  
+        window.location.href = "preview.html";
+  
+      } catch (err) {
+        console.error(err);
+        status.textContent = "❌ Error processing the dataset.";
+      }
+    });
+  
+    // Auth protection
+    onAuthStateChanged(auth, user => {
+      if (!user) window.location.href = "login.html";
+    });
+  </script>
 
-      const blob = await response.blob();
-      const url = URL.createObjectURL(blob);
-
-      // Save preview + history
-      localStorage.setItem('latestDataset', url);
-      const history = JSON.parse(localStorage.getItem('datasetHistory') || '[]');
-      history.push({ filename: fileInput.files[0].name, date: new Date().toLocaleString() });
-      localStorage.setItem('datasetHistory', JSON.stringify(history));
-
-      window.location.href = "preview.html";
-
-    } catch (error) {
-      console.error(error);
-      status.textContent = "❌ Error processing the file.";
-    }
-  });
-</script>
 
 </body>
 </html>
