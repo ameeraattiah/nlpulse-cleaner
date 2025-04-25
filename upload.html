@@ -301,7 +301,25 @@
         history.push({ filename: file.name, date: new Date().toLocaleString() });
         localStorage.setItem('datasetHistory', JSON.stringify(history));
   
+      // Download automatically
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'processed_dataset.csv';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      // Save for preview
+      localStorage.setItem('latestDataset', url);
+      const history = JSON.parse(localStorage.getItem('datasetHistory') || '[]');
+      history.push({ filename: file.name, date: new Date().toLocaleString() });
+      localStorage.setItem('datasetHistory', JSON.stringify(history));
+      
+      // Now go to preview
+      setTimeout(() => {
         window.location.href = "preview.html";
+      }, 500);
+
   
       } catch (err) {
         console.error(err);
