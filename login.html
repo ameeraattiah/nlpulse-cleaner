@@ -73,7 +73,6 @@
     button {
       width: 100%;
       padding: 0.8rem;
-      background-color: #5A7261;
       color: white;
       border: none;
       border-radius: 0.5rem;
@@ -82,8 +81,12 @@
       cursor: pointer;
       margin-bottom: 1rem;
     }
-
-    .or-divider {
+    /* For the green login button */
+    .primary-btn {
+      background-color: #5A7261;
+      color: white;
+    }
+        .or-divider {
       display: flex;
       align-items: center;
       text-align: center;
@@ -175,7 +178,7 @@
 
     <input type="text" id="username" placeholder="Username" required />
     <input type="password" id="password" placeholder="Password" required />
-    <button id="loginBtn">Login</button>
+    <button class="primary-btn" id="loginBtn ">Login</button>
 
     <div class="or-divider">OR</div>
 
