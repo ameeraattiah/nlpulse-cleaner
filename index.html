@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NLPulse Cleaner - Welcome</title>
+  <title>NLPulse Cleaner - Arabic Dataset Cleaning</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
@@ -13,41 +13,76 @@
       padding: 0;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      flex-direction: column;
       text-align: center;
+      overflow-x: hidden;
     }
+
+    header {
+      padding: 2rem;
+    }
+
     h1 {
+      font-size: 3rem;
       color: #627357;
-      font-size: 2.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
     }
+
     p {
-      color: #7b8d71;
-      font-size: 1.2rem;
+      font-size: 1.3rem;
+      color: #6a7a5d;
       margin-bottom: 2rem;
+      max-width: 650px;
     }
+
     a.button {
       background-color: #627357;
       color: white;
-      padding: 0.8rem 2rem;
       text-decoration: none;
-      border-radius: 0.5rem;
+      font-size: 1.1rem;
+      padding: 0.8rem 2.5rem;
+      border-radius: 8px;
       font-weight: bold;
-      transition: background-color 0.3s ease;
+      transition: background 0.3s ease, transform 0.2s ease;
     }
+
     a.button:hover {
       background-color: #55684d;
+      transform: translateY(-2px);
+    }
+
+    .hero-img {
+      width: 90%;
+      max-width: 600px;
+      margin-top: 2rem;
+      border-radius: 1rem;
+      box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    footer {
+      margin-top: auto;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #8d9d7f;
     }
   </style>
 </head>
 <body>
 
-  <h1>Welcome to NLPulse Cleaner</h1>
-  <p>Clean, process, and download your Arabic datasets easily.</p>
-  <a class="button" href="login.html">Get Started</a>
+  <header>
+    <h1>NLPulse Cleaner</h1>
+    <p>Specialized in Arabic dataset cleaning and processing.  
+    Normalize, deduplicate, clean noise, and prepare your Arabic text datasets for any NLP project — easily and efficiently.</p>
+    <a class="button" href="login.html">Get Started</a>
+  </header>
+
+  <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=900&q=80" alt="Arabic data cleaning illustration" class="hero-img">
+
+  <footer>
+    © 2025 NLPulse Cleaner. All rights reserved.
+  </footer>
 
 </body>
 </html>
-
