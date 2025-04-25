@@ -56,19 +56,20 @@
       padding: 2rem;
     }
 
-    .signup-box {
+    .auth-box {
       background: white;
       padding: 2.5rem;
       border-radius: 1rem;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
       text-align: center;
-      max-width: 400px;
+      max-width: 420px;
       width: 100%;
     }
 
-    .signup-box h2 {
+    .auth-box h2 {
       color: #5A7261;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      font-size: 1.6rem;
     }
 
     input[type="email"],
@@ -79,11 +80,18 @@
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 1rem;
+      background-color: #f8faf7;
+      transition: border-color 0.3s;
     }
 
-    button {
+    input:focus {
+      border-color: #627357;
+      outline: none;
+    }
+
+    .btn-primary {
       width: 100%;
-      padding: 0.75rem;
+      padding: 0.8rem;
       border: none;
       background-color: #627357;
       color: white;
@@ -93,8 +101,29 @@
       margin-top: 1rem;
     }
 
-    button:hover {
+    .btn-primary:hover {
       background-color: #55684d;
+    }
+
+    .divider {
+      margin: 1.5rem 0;
+      display: flex;
+      align-items: center;
+      text-align: center;
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: #ccc;
+    }
+
+    .divider span {
+      padding: 0 1rem;
+      color: #888;
+      font-weight: 500;
     }
 
     .social-btn {
@@ -105,10 +134,10 @@
       border-radius: 6px;
       font-weight: 500;
       font-size: 1rem;
-      padding: 0.8rem;
+      padding: 0.75rem;
       cursor: pointer;
       transition: all 0.25s ease;
-      margin: 0.5rem 0;
+      margin-bottom: 1rem;
     }
 
     .google-btn {
@@ -134,16 +163,10 @@
       height: 22px;
     }
 
-    .message {
-      color: red;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
-    }
-
     .footer {
-      margin-top: 1rem;
       font-size: 0.9rem;
       color: #777;
+      margin-top: 1rem;
     }
 
     .footer a {
@@ -154,6 +177,12 @@
 
     .footer a:hover {
       text-decoration: underline;
+    }
+
+    .message {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
     }
   </style>
 </head>
@@ -170,13 +199,14 @@
   </nav>
 
   <main>
-    <div class="signup-box">
+    <div class="auth-box">
       <h2>Create Your Account</h2>
 
       <input type="email" id="email" placeholder="Email" />
       <input type="password" id="password" placeholder="Password" />
-      <button id="signupBtn">Sign Up</button>
-      <div id="message" class="message"></div>
+      <button class="btn-primary" id="signupBtn">Sign Up</button>
+
+      <div class="divider"><span>OR</span></div>
 
       <div class="social-btn google-btn" id="googleSignup">
         <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" />
@@ -187,6 +217,8 @@
         <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" />
         Sign up with GitHub
       </div>
+
+      <div id="message" class="message"></div>
 
       <div class="footer">
         Already have an account? <a href="login.html">Login</a>
@@ -213,7 +245,6 @@
         window.location.href = "dashboard.html";
       } catch (err) {
         if (err.code === "auth/email-already-in-use") {
-          // Redirect and show message
           localStorage.setItem("loginMessage", "You already have an account. Please log in.");
           window.location.href = "login.html";
         } else {
@@ -242,7 +273,6 @@
       }
     });
 
-    // Logout (nav)
     window.logout = async function () {
       await signOut(auth);
       window.location.href = "login.html";
