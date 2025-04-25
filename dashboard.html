@@ -1,1 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - NLPulse Cleaner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script type="module" src="./firebase.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
+    body {
+      background-color: #F1F7EE;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    nav {
+      background-color: #5A7261;
+      width: 100%;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    nav .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: opacity 0.3s;
+    }
+
+    nav .nav-links a:hover {
+      opacity: 0.8;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    h2 {
+      color: #627357;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+    }
+
+    .upload-button {
+      background-color: #627357;
+      color: white;
+      text-decoration: none;
+      padding: 0.8rem 2rem;
+      border-radius: 8px;
+      font-weight: bold;
+      font-size: 1.1rem;
+      margin-bottom: 2rem;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .upload-button:hover {
+      background-color: #55684d;
+      transform: translateY(-2px);
+    }
+
+    .history-list {
+      width: 100%;
+      max-width: 600px;
+      background: white;
+      padding: 1rem;
+      border-radius: 1rem;
+      box-shadow: 0px 8px 20px rgba(0,0,0,0.1);
+      text-align: left;
+    }
+
+    .history-item {
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+      font-size: 1rem;
+      color: #5c6d5a;
+    }
+
+    .history-item:last-child {
+      border-bottom: none;
+    }
+
+    footer {
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #8d9d7f;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo">NLPulse Cleaner</a>
+    <div class="nav-links" id="nav-links">
+      <!-- Links will be injected here based on auth -->
+    </div>
+  </nav>
+
+  <main>
+    <h2>Welcome to Your Dashboard</h2>
+    <a href="upload.html" class="upload-button">Upload New Dataset</a>
+
+    <div class="history-list" id="historyList">
+      <!-- History entries will appear here -->
+    </div>
+  </main>
+
+  <footer>
+    © 2025 NLPulse Cleaner. All rights reserved.
+  </footer>
+
+  <script type="module">
+    import { auth, signOut } from './firebase.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+
+    // Navbar dynamic rendering
+    const navLinks = document.getElementById('nav-links');
+
+    function renderNav(isLoggedIn) {
+      if (isLoggedIn) {
+        navLinks.innerHTML = `
+          <a href="dashboard.html">Dashboard</a>
+          <a href="upload.html">Upload</a>
+          <a href="preview.html">Preview</a>
+          <a href="#" onclick="logout()">Logout</a>
+        `;
+      } else {
+        window.location.href = "login.html";
+      }
+    }
+
+    function logout() {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      renderNav(!!user);
+    });
+
+    // Load history
+    const historyList = document.getElementById('historyList');
+    const datasetHistory = JSON.parse(localStorage.getItem('datasetHistory') || '[]');
+
+    if (datasetHistory.length === 0) {
+      historyList.innerHTML = '<p>No past uploads yet.</p>';
+    } else {
+      historyList.innerHTML = datasetHistory.map(item => 
+        `<div class="history-item">📂 ${item.filename} — <i>${item.date}</i></div>`
+      ).reverse().join('');
+    }
+  </script>
+
+</body>
+</html>
