@@ -1,1 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Preview Dataset - NLPulse Cleaner</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script type="module" src="./firebase.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #F1F7EE;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    nav {
+      background-color: #5A7261;
+      width: 100%;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    nav .logo {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    nav .nav-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    nav .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-size: 1rem;
+      transition: opacity 0.3s;
+    }
+
+    nav .nav-links a:hover {
+      opacity: 0.8;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    h2 {
+      color: #627357;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+    }
+
+    table {
+      width: 90%;
+      max-width: 800px;
+      margin-top: 2rem;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 1rem;
+      overflow: hidden;
+      box-shadow: 0px 8px 20px rgba(0,0,0,0.1);
+    }
+
+    th, td {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid #eee;
+      font-size: 0.95rem;
+      text-align: left;
+      color: #5c6d5a;
+    }
+
+    th {
+      background-color: #e4ebe1;
+      color: #4a5c49;
+    }
+
+    button {
+      background-color: #627357;
+      color: white;
+      padding: 0.7rem 2rem;
+      border: none;
+      border-radius: 0.5rem;
+      margin-top: 1.5rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #55684d;
+    }
+
+    footer {
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #8d9d7f;
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="index.html" class="logo">NLPulse Cleaner</a>
+    <div class="nav-links" id="nav-links">
+      <!-- Links will be injected -->
+    </div>
+  </nav>
+
+  <main>
+    <h2>Preview of Your Cleaned Dataset</h2>
+
+    <div id="tableContainer"></div>
+
+    <button id="downloadBtn">Download Processed Dataset</button>
+  </main>
+
+  <footer>
+    © 2025 NLPulse Cleaner. All rights reserved.
+  </footer>
+
+  <script type="module">
+    import { auth, signOut } from './firebase.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+
+    const navLinks = document.getElementById('nav-links');
+
+    function renderNav(isLoggedIn) {
+      if (isLoggedIn) {
+        navLinks.innerHTML = `
+          <a href="dashboard.html">Dashboard</a>
+          <a href="upload.html">Upload</a>
+          <a href="preview.html">Preview</a>
+          <a href="#" onclick="logout()">Logout</a>
+        `;
+      } else {
+        window.location.href = "login.html";
+      }
+    }
+
+    function logout() {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      renderNav(!!user);
+    });
+
+    // Load and preview dataset
+    const tableContainer = document.getElementById('tableContainer');
+    const datasetUrl = localStorage.getItem('latestDataset');
+
+    if (datasetUrl) {
+      fetch(datasetUrl)
+        .then(res => res.text())
+        .then(text => {
+          const rows = text.split('\n').map(r => r.split(','));
+          if (rows.length > 0) {
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const headerRow = document.createElement('tr');
+            rows[0].forEach(h => {
+              const th = document.createElement('th');
+              th.textContent = h;
+              headerRow.appendChild(th);
+            });
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            rows.slice(1, 6).forEach(r => {  // Show first 5 rows only
+              const tr = document.createElement('tr');
+              r.forEach(c => {
+                const td = document.createElement('td');
+                td.textContent = c;
+                tr.appendChild(td);
+              });
+              tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+
+            tableContainer.appendChild(table);
+          }
+        });
+    } else {
+      tableContainer.innerHTML = "<p>No dataset found to preview.</p>";
+    }
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+      if (datasetUrl) {
+        const a = document.createElement('a');
+        a.href = datasetUrl;
+        a.download = 'processed_dataset.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      }
+    });
+  </script>
+
+</body>
+</html>
 
