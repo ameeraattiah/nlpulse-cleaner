@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Signup – NLPulse Cleaner</title>
+  <title>Sign Up – NLPulse Cleaner</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
   <script type="module" src="./firebase.js"></script>
   <style>
@@ -72,8 +72,10 @@
       font-size: 1.6rem;
     }
 
+    input[type="text"],
     input[type="email"],
-    input[type="password"] {
+    input[type="password"],
+    input[type="tel"] {
       width: 100%;
       padding: 0.75rem;
       margin: 0.5rem 0;
@@ -84,12 +86,12 @@
       transition: border-color 0.3s;
       box-sizing: border-box;
     }
-    
+
     input:focus {
       border-color: #627357;
       outline: none;
     }
-    
+
     .btn-primary {
       width: 100%;
       padding: 0.8rem;
@@ -102,20 +104,6 @@
       margin-top: 1rem;
       box-sizing: border-box;
     }
-    
-    .social-btn {
-      width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      box-sizing: border-box;
-    }
-
 
     .btn-primary:hover {
       background-color: #55684d;
@@ -142,7 +130,21 @@
       font-weight: 500;
     }
 
-
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 0.75rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      margin-bottom: 1rem;
+      width: 100%;
+      box-sizing: border-box;
+    }
 
     .google-btn {
       border: 1.5px solid #ccc;
@@ -203,8 +205,10 @@
     <div class="auth-box">
       <h2>Create Your Account</h2>
 
-      <input type="email" id="email" placeholder="Email" />
-      <input type="password" id="password" placeholder="Password" />
+      <input type="text" id="username" placeholder="Username" required />
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="tel" id="phone" placeholder="Phone Number (optional)" />
+      <input type="password" id="password" placeholder="Password" required />
       <button class="btn-primary" id="signupBtn">Sign Up</button>
 
       <div class="divider"><span>OR</span></div>
@@ -231,22 +235,42 @@
     import { auth, provider, githubProvider } from './firebase.js';
     import {
       createUserWithEmailAndPassword,
+      updateProfile,
       signInWithPopup,
       signOut
     } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
 
+    const username = document.getElementById("username");
     const email = document.getElementById("email");
     const password = document.getElementById("password");
+    const phone = document.getElementById("phone");
     const message = document.getElementById("message");
 
     document.getElementById("signupBtn").addEventListener("click", async () => {
       message.textContent = "";
+
+      if (!username.value || !email.value || !password.value) {
+        message.textContent = "⚠️ Please fill all required fields.";
+        return;
+      }
+
       try {
-        await createUserWithEmailAndPassword(auth, email.value, password.value);
+        const res = await createUserWithEmailAndPassword(auth, email.value, password.value);
+
+        // Save username
+        await updateProfile(res.user, {
+          displayName: username.value
+        });
+
+        // Store phone locally if entered
+        if (phone.value) {
+          localStorage.setItem("phone", phone.value);
+        }
+
         window.location.href = "dashboard.html";
       } catch (err) {
-        if (err.code === "auth/email-already-in-use") {
-          localStorage.setItem("loginMessage", "You already have an account. Please log in.");
+        if (err.code === 'auth/email-already-in-use') {
+          localStorage.setItem("loginMessage", "⚠️ This email is already registered.");
           window.location.href = "login.html";
         } else {
           message.textContent = "❌ " + (err.message || "Signup failed.");
@@ -260,7 +284,6 @@
         window.location.href = "dashboard.html";
       } catch (err) {
         message.textContent = "❌ Google signup failed.";
-        console.error(err);
       }
     });
 
@@ -270,14 +293,15 @@
         window.location.href = "dashboard.html";
       } catch (err) {
         message.textContent = "❌ GitHub signup failed.";
-        console.error(err);
       }
     });
 
+    // Logout handler for navbar
     window.logout = async function () {
       await signOut(auth);
       window.location.href = "login.html";
     };
   </script>
+
 </body>
 </html>
