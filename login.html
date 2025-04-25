@@ -241,6 +241,12 @@
       await signOut(auth);
       window.location.href = "login.html";
     };
+    // ⬇️ Add this just below the logout function
+    const saved = localStorage.getItem("loginMessage");
+    if (saved) {
+      message.textContent = saved;
+      localStorage.removeItem("loginMessage");
+    }
   </script>
 </body>
 </html>
