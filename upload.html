@@ -164,7 +164,9 @@
   </footer>
 
 <script type="module">
-  import { auth, signOut } from './firebase.js';
+  import { auth } from './firebase.js';
+  import { signOut } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+
   import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
 
   const navLinks = document.getElementById('nav-links');
