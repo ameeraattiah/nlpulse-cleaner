@@ -104,6 +104,31 @@
     .or-divider:not(:empty)::after {
       margin-left: .75em;
     }
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.7rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
+      cursor: pointer;
+    }
+    
+    .social-btn.white {
+      background-color: white;
+      color: black;
+    }
+    
+    .social-btn.black {
+      background-color: #24292f;
+      color: white;
+      border: none;
+    }
 
     .google-btn, .github-btn {
       width: 100%;
