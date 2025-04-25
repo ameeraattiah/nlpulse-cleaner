@@ -70,7 +70,12 @@
   </style>
 </head>
 <body>
-
+<nav style="background-color: #5A7261; padding: 1rem; display: flex; justify-content: space-between; align-items: center; font-family: 'Inter', sans-serif;">
+  <div style="color: white; font-size: 1.5rem; font-weight: bold;">NLPulse Cleaner</div>
+  <div id="nav-links" style="display: flex; gap: 1rem;">
+    <!-- Dynamic links inserted by JavaScript -->
+  </div>
+</nav>
   <header>
     <h1>NLPulse Cleaner</h1>
     <p>Specialized in Arabic dataset cleaning and processing.  
@@ -79,7 +84,38 @@
   </header>
 
   <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=900&q=80" alt="Arabic data cleaning illustration" class="hero-img">
-
+  <script type="module">
+    import { auth, signOut } from './firebase.js';
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+  
+    const navLinks = document.getElementById('nav-links');
+  
+    function renderNav(isLoggedIn) {
+      if (isLoggedIn) {
+        navLinks.innerHTML = `
+          <a href="dashboard.html" style="color: white; text-decoration: none;">Dashboard</a>
+          <a href="upload.html" style="color: white; text-decoration: none;">Upload</a>
+          <a href="preview.html" style="color: white; text-decoration: none;">Preview</a>
+          <a href="#" onclick="logout()" style="color: white; text-decoration: none;">Logout</a>
+        `;
+      } else {
+        navLinks.innerHTML = `
+          <a href="login.html" style="color: white; text-decoration: none;">Login</a>
+          <a href="signup.html" style="color: white; text-decoration: none;">Signup</a>
+        `;
+      }
+    }
+  
+    function logout() {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
+    }
+  
+    onAuthStateChanged(auth, (user) => {
+      renderNav(!!user);
+    });
+  </script>
   <footer>
     © 2025 NLPulse Cleaner. All rights reserved.
   </footer>
