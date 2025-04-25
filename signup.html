@@ -46,6 +46,11 @@
       box-sizing: border-box;
     }
 
+    /* ✨ Prevent browser autofill from stretching width */
+    input:-webkit-autofill {
+      box-shadow: 0 0 0px 1000px white inset !important;
+      -webkit-text-fill-color: #000 !important;
+    }
     .container {
       max-width: 400px;
       margin: 5rem auto;
