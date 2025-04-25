@@ -2,23 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Sign Up – NLPulse Cleaner</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <script type="module" src="./firebase.js"></script>
   <style>
     body {
+      background-color: #F1F7EE;
+      font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
-      font-family: 'Inter', sans-serif;
-      background-color: #F1F7EE;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
     }
 
     nav {
       background-color: #5A7261;
+      color: white;
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
@@ -26,169 +24,104 @@
     }
 
     nav .logo {
-      color: white;
-      font-size: 1.8rem;
       font-weight: bold;
+      font-size: 1.5rem;
+      color: white;
       text-decoration: none;
-    }
-
-    nav .nav-links {
-      display: flex;
-      gap: 1.5rem;
     }
 
     nav .nav-links a {
       color: white;
+      margin-left: 1rem;
       text-decoration: none;
-      font-size: 1rem;
-      transition: opacity 0.3s;
+      font-weight: 500;
     }
 
-    nav .nav-links a:hover {
-      opacity: 0.8;
-    }
-
-    main {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem;
-    }
-
-    .auth-box {
+    .container {
+      max-width: 400px;
+      margin: 5rem auto;
       background: white;
-      padding: 2.5rem;
-      border-radius: 1rem;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+      padding: 2rem;
+      border-radius: 0.8rem;
+      box-shadow: 0px 6px 16px rgba(0,0,0,0.1);
       text-align: center;
-      max-width: 420px;
-      width: 100%;
     }
 
-    .auth-box h2 {
-      color: #5A7261;
-      margin-bottom: 2rem;
-      font-size: 1.6rem;
+    h2 {
+      color: #627357;
+      margin-bottom: 1.5rem;
     }
 
-    input[type="text"],
-    input[type="email"],
-    input[type="password"],
-    input[type="tel"] {
-      width: 100%;
-      padding: 0.75rem;
-      margin: 0.5rem 0;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 1rem;
-      background-color: #f8faf7;
-      transition: border-color 0.3s;
-      box-sizing: border-box;
-    }
-
-    input:focus {
-      border-color: #627357;
-      outline: none;
-    }
-
-    .btn-primary {
+    input {
       width: 100%;
       padding: 0.8rem;
-      border: none;
-      background-color: #627357;
-      color: white;
-      border-radius: 6px;
+      margin-bottom: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
       font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      background-color: #5A7261;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: bold;
       cursor: pointer;
-      margin-top: 1rem;
-      box-sizing: border-box;
+      margin-bottom: 1rem;
     }
 
-    .btn-primary:hover {
-      background-color: #55684d;
-    }
-
-    .divider {
-      margin: 1.5rem 0;
+    .or-divider {
       display: flex;
       align-items: center;
       text-align: center;
+      margin: 1rem 0;
     }
 
-    .divider::before,
-    .divider::after {
-      content: "";
+    .or-divider::before,
+    .or-divider::after {
+      content: '';
       flex: 1;
-      height: 1px;
-      background: #ccc;
+      border-bottom: 1px solid #ccc;
     }
 
-    .divider span {
-      padding: 0 1rem;
-      color: #888;
-      font-weight: 500;
+    .or-divider:not(:empty)::before {
+      margin-right: .75em;
     }
 
-    .social-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.6rem;
-      border-radius: 6px;
-      font-weight: 500;
-      font-size: 1rem;
-      padding: 0.75rem;
-      cursor: pointer;
-      transition: all 0.25s ease;
-      margin-bottom: 1rem;
+    .or-divider:not(:empty)::after {
+      margin-left: .75em;
+    }
+
+    .google-btn, .github-btn {
       width: 100%;
-      box-sizing: border-box;
-    }
-
-    .google-btn {
-      border: 1.5px solid #ccc;
-      background: white;
-    }
-
-    .google-btn:hover {
-      background: #f5f5f5;
+      padding: 0.8rem;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+      font-size: 1rem;
+      font-weight: bold;
+      background-color: white;
+      cursor: pointer;
+      margin-bottom: 0.8rem;
     }
 
     .github-btn {
-      background-color: #333;
+      background-color: #1a1a1a;
       color: white;
-      border: none;
     }
 
-    .github-btn:hover {
-      background-color: #222;
-    }
-
-    .social-btn img {
-      height: 22px;
-    }
-
-    .footer {
-      font-size: 0.9rem;
-      color: #777;
+    p {
       margin-top: 1rem;
+      font-size: 0.95rem;
     }
 
-    .footer a {
-      color: #5A7261;
-      font-weight: 500;
+    p a {
+      color: #627357;
       text-decoration: none;
-    }
-
-    .footer a:hover {
-      text-decoration: underline;
-    }
-
-    .message {
-      color: red;
-      font-size: 0.9rem;
-      margin-top: 0.5rem;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -198,109 +131,94 @@
     <a href="index.html" class="logo">NLPulse Cleaner</a>
     <div class="nav-links">
 
-    </div>
   </nav>
 
-  <main>
-    <div class="auth-box">
-      <h2>Create Your Account</h2>
+  <div class="container">
+    <h2>Create Your Account</h2>
 
-      <input type="text" id="username" placeholder="Username" required />
-      <input type="email" id="email" placeholder="Email" required />
-      <input type="tel" id="phone" placeholder="Phone Number (optional)" />
-      <input type="password" id="password" placeholder="Password" required />
-      <button class="btn-primary" id="signupBtn">Sign Up</button>
+    <input type="text" id="username" placeholder="Username" required />
+    <input type="email" id="email" placeholder="Email" required />
+    <input type="text" id="phone" placeholder="Phone (optional)" />
+    <input type="password" id="password" placeholder="Password" required />
+    <button id="signupBtn">Sign Up</button>
 
-      <div class="divider"><span>OR</span></div>
+    <div class="or-divider">OR</div>
 
-      <div class="social-btn google-btn" id="googleSignup">
-        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" />
-        Sign up with Google
-      </div>
+    <button class="google-btn" id="googleSignup">Sign up with Google</button>
+    <button class="github-btn" id="githubSignup">Sign up with GitHub</button>
 
-      <div class="social-btn github-btn" id="githubSignup">
-        <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/github/github-original.svg" />
-        Sign up with GitHub
-      </div>
-
-      <div id="message" class="message"></div>
-
-      <div class="footer">
-        Already have an account? <a href="login.html">Login</a>
-      </div>
-    </div>
-  </main>
+    <p>Already have an account? <a href="login.html">Login</a></p>
+    <p id="status" style="color:#d35400;"></p>
+  </div>
 
   <script type="module">
-    import { auth, provider, githubProvider } from './firebase.js';
+    import { auth, db } from './firebase.js';
     import {
       createUserWithEmailAndPassword,
-      updateProfile,
-      signInWithPopup,
-      signOut
+      GoogleAuthProvider,
+      GithubAuthProvider,
+      signInWithPopup
     } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+    import {
+      doc, setDoc, collection
+    } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-firestore.js";
 
-    const username = document.getElementById("username");
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const phone = document.getElementById("phone");
-    const message = document.getElementById("message");
+    const usernameInput = document.getElementById("username");
+    const emailInput = document.getElementById("email");
+    const phoneInput = document.getElementById("phone");
+    const passwordInput = document.getElementById("password");
+    const status = document.getElementById("status");
 
     document.getElementById("signupBtn").addEventListener("click", async () => {
-      message.textContent = "";
+      const username = usernameInput.value.trim();
+      const email = emailInput.value.trim();
+      const phone = phoneInput.value.trim();
+      const password = passwordInput.value;
 
-      if (!username.value || !email.value || !password.value) {
-        message.textContent = "⚠️ Please fill all required fields.";
+      if (!username || !email || !password) {
+        status.textContent = "Please fill in all required fields.";
         return;
       }
 
       try {
-        const res = await createUserWithEmailAndPassword(auth, email.value, password.value);
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = userCredential.user.uid;
 
-        // Save username
-        await updateProfile(res.user, {
-          displayName: username.value
+        // Save user info in Firestore
+        await setDoc(doc(db, "users", uid), {
+          username,
+          email,
+          phone
         });
 
-        // Store phone locally if entered
-        if (phone.value) {
-          localStorage.setItem("phone", phone.value);
-        }
-
         window.location.href = "dashboard.html";
       } catch (err) {
-        if (err.code === 'auth/email-already-in-use') {
-          localStorage.setItem("loginMessage", "⚠️ This email is already registered.");
-          window.location.href = "login.html";
-        } else {
-          message.textContent = "❌ " + (err.message || "Signup failed.");
-        }
+        console.error(err);
+        status.textContent = err.message;
       }
     });
 
+    // Google Signup
     document.getElementById("googleSignup").addEventListener("click", async () => {
+      const provider = new GoogleAuthProvider();
       try {
-        await signInWithPopup(auth, provider);
+        const result = await signInWithPopup(auth, provider);
         window.location.href = "dashboard.html";
       } catch (err) {
-        message.textContent = "❌ Google signup failed.";
+        status.textContent = err.message;
       }
     });
 
+    // GitHub Signup
     document.getElementById("githubSignup").addEventListener("click", async () => {
+      const provider = new GithubAuthProvider();
       try {
-        await signInWithPopup(auth, githubProvider);
+        const result = await signInWithPopup(auth, provider);
         window.location.href = "dashboard.html";
       } catch (err) {
-        message.textContent = "❌ GitHub signup failed.";
+        status.textContent = err.message;
       }
     });
-
-    // Logout handler for navbar
-    window.logout = async function () {
-      await signOut(auth);
-      window.location.href = "login.html";
-    };
   </script>
 
 </body>
