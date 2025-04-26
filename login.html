@@ -8,14 +8,14 @@
   <script type="module" src="./firebase.js"></script>
   <style>
     body {
-      background-color: #F1F7EE;
+      background-color: #F3F7FA;
       font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
     }
 
     nav {
-      background-color: #5A7261;
+      background-color: #5A7A99;
       color: white;
       padding: 1rem 2rem;
       display: flex;
@@ -30,13 +30,6 @@
       text-decoration: none;
     }
 
-    nav .nav-links a {
-      color: white;
-      margin-left: 1rem;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
     .container {
       max-width: 400px;
       margin: 5rem auto;
@@ -48,7 +41,7 @@
     }
 
     h2 {
-      color: #627357;
+      color: #5A7A99;
       margin-bottom: 1.5rem;
     }
 
@@ -59,34 +52,52 @@
       border: 1px solid #ccc;
       border-radius: 0.5rem;
       font-size: 1rem;
-    }
-    input[type="text"], input[type="password"] {
-      width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 0.5rem;
-      margin-bottom: 1rem;
       box-sizing: border-box;
     }
 
     button {
       width: 100%;
       padding: 0.8rem;
-      color: white;
-      border: none;
       border-radius: 0.5rem;
       font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
       margin-bottom: 1rem;
+      border: none;
     }
-    /* For the green login button */
+
     .primary-btn {
-      background-color: #5A7261;
+      background-color: #5A7A99;
       color: white;
     }
-        .or-divider {
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
+      cursor: pointer;
+    }
+
+    .social-btn.white {
+      background-color: white;
+      color: black;
+    }
+
+    .social-btn.black {
+      background-color: #24292f;
+      color: white;
+      border: none;
+    }
+
+    .or-divider {
       display: flex;
       align-items: center;
       text-align: center;
@@ -107,48 +118,6 @@
     .or-divider:not(:empty)::after {
       margin-left: .75em;
     }
-    .social-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      width: 100%;
-      padding: 0.7rem;
-      font-size: 1rem;
-      border-radius: 0.5rem;
-      font-weight: 500;
-      border: 1px solid #ccc;
-      margin-bottom: 1rem;
-      cursor: pointer;
-    }
-    
-    .social-btn.white {
-      background-color: white;
-      color: black;
-    }
-    
-    .social-btn.black {
-      background-color: #24292f;
-      color: white;
-      border: none;
-    }
-
-    .google-btn, .github-btn {
-      width: 100%;
-      padding: 0.8rem;
-      border: 1px solid #ccc;
-      border-radius: 0.5rem;
-      font-size: 1rem;
-      font-weight: bold;
-      background-color: white;
-      cursor: pointer;
-      margin-bottom: 0.8rem;
-    }
-
-    .github-btn {
-      background-color: #1a1a1a;
-      color: white;
-    }
 
     p {
       margin-top: 1rem;
@@ -156,19 +125,17 @@
     }
 
     p a {
-      color: #627357;
+      color: #5A7A99;
       text-decoration: none;
       font-weight: 600;
     }
   </style>
 </head>
+
 <body>
 
   <nav>
     <a href="index.html" class="logo">NLPulse Cleaner</a>
-    <div class="nav-links">
-
-    </div>
   </nav>
 
   <div class="container">
@@ -176,16 +143,17 @@
 
     <input type="text" id="username" placeholder="Username" required />
     <input type="password" id="password" placeholder="Password" required />
-    <button class="primary-btn" id="loginBtn ">Login</button>
+    <button class="primary-btn" id="loginBtn">Login</button>
 
     <div class="or-divider">OR</div>
 
     <button class="social-btn white" id="googleLogin">
-      <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="20" style="margin-right: 8px;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="20" />
       Log in with Google
     </button>
+
     <button class="social-btn black" id="githubLogin">
-      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/github.svg" alt="GitHub" width="20" style="filter: invert(1); margin-right: 8px;">
+      <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" width="20" />
       Log in with GitHub
     </button>
 
@@ -194,7 +162,9 @@
   </div>
 
   <script type="module">
-    import { auth, db, provider, githubProvider } from './firebase.js';  // ✅ Important import!
+    import { auth, db, provider, githubProvider } from './firebase.js';
+    import { signInWithEmailAndPassword, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+    import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-firestore.js";
 
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
@@ -223,30 +193,30 @@
 
         await signInWithEmailAndPassword(auth, email, password);
         localStorage.setItem("username", username);
-        window.location.href = "dashboard.html";
+        window.location.href = "upload.html";
       } catch (err) {
         console.error(err);
         status.textContent = err.message;
       }
-    });    
+    });
+
     document.getElementById("googleLogin").addEventListener("click", async () => {
       try {
-        await signInWithPopup(auth, provider); // ✅ using the provider you exported
-        window.location.href = "dashboard.html";
-      } catch (err) {
-        status.textContent = err.message;
-      }
-    });
-    
-    document.getElementById("githubLogin").addEventListener("click", async () => {
-      try {
-        await signInWithPopup(auth, githubProvider); // ✅ using githubProvider you exported
-        window.location.href = "dashboard.html";
+        await signInWithPopup(auth, provider);
+        window.location.href = "upload.html";
       } catch (err) {
         status.textContent = err.message;
       }
     });
 
+    document.getElementById("githubLogin").addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, githubProvider);
+        window.location.href = "upload.html";
+      } catch (err) {
+        status.textContent = err.message;
+      }
+    });
   </script>
 
 </body>
