@@ -194,7 +194,7 @@
   </div>
 
   <script type="module">
-    import { auth, db, provider, githubProvider } from './firebase.js';
+    import { auth, db, provider, githubProvider } from './firebase.js';  // ✅ Important import!
 
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
@@ -228,27 +228,25 @@
         console.error(err);
         status.textContent = err.message;
       }
-    });
-
+    });    
     document.getElementById("googleLogin").addEventListener("click", async () => {
-      const provider = new GoogleAuthProvider();
       try {
-        await signInWithPopup(auth, provider);
+        await signInWithPopup(auth, provider); // ✅ using the provider you exported
+        window.location.href = "dashboard.html";
+      } catch (err) {
+        status.textContent = err.message;
+      }
+    });
+    
+    document.getElementById("githubLogin").addEventListener("click", async () => {
+      try {
+        await signInWithPopup(auth, githubProvider); // ✅ using githubProvider you exported
         window.location.href = "dashboard.html";
       } catch (err) {
         status.textContent = err.message;
       }
     });
 
-    document.getElementById("githubLogin").addEventListener("click", async () => {
-      const provider = new GithubAuthProvider();
-      try {
-        await signInWithPopup(auth, provider);
-        window.location.href = "dashboard.html";
-      } catch (err) {
-        status.textContent = err.message;
-      }
-    });
   </script>
 
 </body>
