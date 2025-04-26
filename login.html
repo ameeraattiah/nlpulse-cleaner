@@ -8,15 +8,14 @@
   <script type="module" src="./firebase.js"></script>
   <style>
     body {
-      background-color: #F3F7FA;
+      background-color: #D8E2EC;
       font-family: 'Inter', sans-serif;
       margin: 0;
       padding: 0;
     }
 
     nav {
-      background-color: #5A7A99;
-      color: white;
+      background-color: #5A7592;
       padding: 1rem 2rem;
       display: flex;
       justify-content: space-between;
@@ -41,7 +40,7 @@
     }
 
     h2 {
-      color: #5A7A99;
+      color: #4A628A;
       margin-bottom: 1.5rem;
     }
 
@@ -55,46 +54,17 @@
       box-sizing: border-box;
     }
 
-    button {
+    button.primary-btn {
       width: 100%;
       padding: 0.8rem;
+      background-color: #5A7592;
+      color: white;
+      border: none;
       border-radius: 0.5rem;
       font-size: 1rem;
       font-weight: bold;
       cursor: pointer;
       margin-bottom: 1rem;
-      border: none;
-    }
-
-    .primary-btn {
-      background-color: #5A7A99;
-      color: white;
-    }
-
-    .social-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      width: 100%;
-      padding: 0.75rem;
-      font-size: 1rem;
-      border-radius: 0.5rem;
-      font-weight: 500;
-      border: 1px solid #ccc;
-      margin-bottom: 1rem;
-      cursor: pointer;
-    }
-
-    .social-btn.white {
-      background-color: white;
-      color: black;
-    }
-
-    .social-btn.black {
-      background-color: #24292f;
-      color: white;
-      border: none;
     }
 
     .or-divider {
@@ -119,19 +89,44 @@
       margin-left: .75em;
     }
 
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.7rem;
+      font-size: 1rem;
+      border-radius: 0.5rem;
+      font-weight: 500;
+      border: 1px solid #ccc;
+      margin-bottom: 1rem;
+      cursor: pointer;
+    }
+
+    .social-btn.white {
+      background-color: white;
+      color: black;
+    }
+
+    .social-btn.black {
+      background-color: #24292f;
+      color: white;
+      border: none;
+    }
+
     p {
       margin-top: 1rem;
       font-size: 0.95rem;
     }
 
     p a {
-      color: #5A7A99;
+      color: #4A628A;
       text-decoration: none;
       font-weight: 600;
     }
   </style>
 </head>
-
 <body>
 
   <nav>
@@ -148,12 +143,11 @@
     <div class="or-divider">OR</div>
 
     <button class="social-btn white" id="googleLogin">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" alt="Google" width="20" />
+      <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="20" style="margin-right: 8px;">
       Log in with Google
     </button>
-
     <button class="social-btn black" id="githubLogin">
-      <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" width="20" />
+      <img src="https://cdn.jsdelivr.net/npm/simple-icons@v5/icons/github.svg" alt="GitHub" width="20" style="filter: invert(1); margin-right: 8px;">
       Log in with GitHub
     </button>
 
@@ -162,9 +156,14 @@
   </div>
 
   <script type="module">
-    import { auth, db, provider, githubProvider } from './firebase.js';
-    import { signInWithEmailAndPassword, signInWithPopup } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
-    import { collection, getDocs, query, where } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-firestore.js";
+    import { auth, db, githubProvider, provider } from './firebase.js';
+    import {
+      signInWithEmailAndPassword,
+      signInWithPopup
+    } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+    import {
+      collection, getDocs, query, where
+    } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-firestore.js";
 
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
@@ -175,7 +174,7 @@
       const password = passwordInput.value;
 
       if (!username || !password) {
-        status.textContent = "Please enter username and password.";
+        status.textContent = "Please enter both fields.";
         return;
       }
 
@@ -193,9 +192,8 @@
 
         await signInWithEmailAndPassword(auth, email, password);
         localStorage.setItem("username", username);
-        window.location.href = "upload.html";
+        window.location.href = "dashboard.html";
       } catch (err) {
-        console.error(err);
         status.textContent = err.message;
       }
     });
@@ -203,7 +201,7 @@
     document.getElementById("googleLogin").addEventListener("click", async () => {
       try {
         await signInWithPopup(auth, provider);
-        window.location.href = "upload.html";
+        window.location.href = "dashboard.html";
       } catch (err) {
         status.textContent = err.message;
       }
@@ -212,7 +210,7 @@
     document.getElementById("githubLogin").addEventListener("click", async () => {
       try {
         await signInWithPopup(auth, githubProvider);
-        window.location.href = "upload.html";
+        window.location.href = "dashboard.html";
       } catch (err) {
         status.textContent = err.message;
       }
