@@ -5,6 +5,7 @@ import { getFirestore } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-
 import {
   getAuth,
   GoogleAuthProvider,
+  GithubAuthProvider,  // ✅ Added this
   signInWithPopup,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
