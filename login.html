@@ -194,19 +194,7 @@
   </div>
 
   <script type="module">
-    import { auth, db } from './firebase.js';
-    import {
-      signInWithEmailAndPassword,
-      GoogleAuthProvider,
-      GithubAuthProvider,
-      signInWithPopup
-    } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
-    import {
-      collection,
-      getDocs,
-      query,
-      where
-    } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-firestore.js";
+    import { auth, db, provider, githubProvider } from './firebase.js';
 
     const usernameInput = document.getElementById("username");
     const passwordInput = document.getElementById("password");
