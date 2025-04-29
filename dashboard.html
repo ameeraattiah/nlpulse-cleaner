@@ -139,6 +139,7 @@
   <script type="module">
     import { auth } from './firebase.js';
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-firestore.js";
 
     // Navbar dynamic rendering
     const navLinks = document.getElementById('nav-links');
@@ -165,23 +166,27 @@
     onAuthStateChanged(auth, (user) => {
       renderNav(!!user);
     });
-
-    // Load history
     const historyList = document.getElementById('historyList');
-    const datasetHistory = JSON.parse(localStorage.getItem('datasetHistory') || '[]');
 
-    if (datasetHistory.length === 0) {
-      historyList.innerHTML = '<p style="text-align: center; color: #5c6d5a;">🛑 No datasets cleaned yet.</p>';
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) return window.location.href = "login.html";
     
-    } else {
-        historyList.innerHTML = datasetHistory.map(item => 
-          `<div class="history-item">
-             📂 <a href="${item.downloadUrl}" download="${item.filename}" style="color: #5A7A99; text-decoration: none;">
-               ${item.filename}
-             </a> — <i>${item.date}</i>
-           </div>`
-        ).reverse().join('');
-    }
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+      const history = userDoc.exists() && userDoc.data().history ? userDoc.data().history : [];
+    
+      if (history.length === 0) {
+        historyList.innerHTML = '<p style="text-align:center;">🛑 No datasets cleaned yet.</p>';
+      } else {
+        historyList.innerHTML = history.map(item => `
+          <div class="history-item">
+            📂 <a href="${item.downloadUrl}" download="${item.filename}" style="color: #5A7A99; text-decoration: none;">
+              ${item.filename}
+            </a> — <i>${item.date}</i>
+          </div>
+        `).reverse().join('');
+      }
+    });
+
   </script>
 
 </body>
