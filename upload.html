@@ -180,6 +180,8 @@
     import { auth } from './firebase.js';
     import { signOut } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+    import { db } from './firebase.js';
+    import { doc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-firestore.js";
 
     const fileInput = document.getElementById('fileInput');
     const dropZone = document.getElementById('dropZone');
