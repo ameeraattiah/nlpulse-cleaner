@@ -167,6 +167,12 @@
       <button class="option-btn" data-value="html">HTML Cleaning</button>
       <button class="option-btn" data-value="noise">Noise Removal</button>
     </div>
+    
+    <select id="downloadFormat" style="margin-bottom: 1rem; padding: 0.5rem; border-radius: 5px; border: 1px solid #ccc;">
+      <option value="csv">Download as CSV</option>
+      <option value="json">Download as JSON</option>
+      <option value="xlsx">Download as XLSX</option>
+    </select>
 
     <button id="uploadBtn">Process Dataset</button>
     <p id="status"></p>
@@ -246,7 +252,9 @@
         const formData = new FormData();
         formData.append('file', file);
         selectedOptions.forEach(opt => formData.append('options[]', opt));
-        formData.append('format', 'csv');
+        const downloadFormat = document.getElementById('downloadFormat').value;
+        formData.append('format', downloadFormat);
+
         status.textContent = "⏳ Processing...";
     
         try {
@@ -268,7 +276,7 @@
           const userDocRef = doc(db, "users", user.uid);
           await updateDoc(userDocRef, {
             history: arrayUnion({
-              filename: file.name.replace(/\.csv$/, '_cleaned.csv'),
+              filename: file.name.replace(/\.csv$/, '_cleaned.${downloadFormat}'),
               date: new Date().toLocaleString(),
               previewOnly: true
             })
