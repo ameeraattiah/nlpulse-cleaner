@@ -173,9 +173,13 @@
     if (datasetHistory.length === 0) {
       historyList.innerHTML = '<p>No past uploads yet.</p>';
     } else {
-      historyList.innerHTML = datasetHistory.map(item => 
-        `<div class="history-item">📂 ${item.filename} — <i>${item.date}</i></div>`
-      ).reverse().join('');
+        historyList.innerHTML = datasetHistory.map(item => 
+          `<div class="history-item">
+             📂 <a href="${item.downloadUrl}" download="${item.filename}" style="color: #5A7A99; text-decoration: none;">
+               ${item.filename}
+             </a> — <i>${item.date}</i>
+           </div>`
+        ).reverse().join('');
     }
   </script>
 
