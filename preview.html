@@ -119,33 +119,57 @@
   </footer>
 
   <script type="module">
-    const container = document.getElementById("previewContainer");
-    const text = localStorage.getItem("latestDatasetText");
+    const container = document.getElementById("preview");
+    const raw = localStorage.getItem("latestDatasetText");
   
-    if (!text) {
-      container.innerHTML = "<p style='color: red;'>⚠️ No dataset found. Please upload and process a dataset first.</p>";
-    } else {
-      try {
-        const rows = text.trim().split("\n").slice(0, 10);
-        const table = document.createElement("table");
-  
-        rows.forEach((row, i) => {
-          const tr = document.createElement("tr");
-          row.split(",").forEach(cell => {
-            const el = document.createElement(i === 0 ? "th" : "td");
-            el.textContent = cell.trim();
-            tr.appendChild(el);
-          });
-          table.appendChild(tr);
-        });
-  
-        container.innerHTML = "<h3 style='color:#5A7A99; margin-bottom: 1rem;'>First 10 Rows:</h3>";
-        container.appendChild(table);
-      } catch (e) {
-        container.innerHTML = "<p style='color: red;'>❌ Failed to render dataset preview.</p>";
-      }
+    if (!raw) {
+      container.innerHTML = `<p style="color:red;">❌ Failed to load dataset preview.</p>`;
+      return;
     }
+  
+    const lines = raw.split('\n').map(l => l.trim()).filter(l => l);
+    const headers = lines[0].split(',').map(h => h.trim());
+  
+    const table = document.createElement('table');
+    table.style.width = "90%";
+    table.style.borderCollapse = "collapse";
+    table.style.margin = "1rem auto";
+  
+    // Header
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    headers.forEach(h => {
+      const th = document.createElement('th');
+      th.textContent = h;
+      th.style.padding = "0.5rem";
+      th.style.border = "1px solid #ccc";
+      th.style.backgroundColor = "#5A7A99";
+      th.style.color = "white";
+      headerRow.appendChild(th);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+  
+    // Body (first 10 non-empty rows)
+    const tbody = document.createElement('tbody');
+    for (let i = 1; i < Math.min(lines.length, 11); i++) {
+      const row = document.createElement('tr');
+      const cols = lines[i].split(',').map(c => c.trim());
+      headers.forEach((_, j) => {
+        const td = document.createElement('td');
+        td.textContent = cols[j] || "--";
+        td.style.padding = "0.5rem";
+        td.style.border = "1px solid #ddd";
+        row.appendChild(td);
+      });
+      tbody.appendChild(row);
+    }
+    table.appendChild(tbody);
+  
+    container.innerHTML = ""; // clear loading
+    container.appendChild(table);
   </script>
+
 
 
 </body>
