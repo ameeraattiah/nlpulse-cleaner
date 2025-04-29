@@ -254,10 +254,9 @@
           status.textContent = `❌ ${error.error || "Processing failed."}`;
           return;
         }
-
         const blob = await res.blob();
         const url = URL.createObjectURL(blob);
-
+        
         // Download immediately
         const link = document.createElement('a');
         link.href = url;
@@ -265,14 +264,20 @@
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-
-        // Store in localStorage for preview
+        
+        // ✅ Save full history with filename + download URL
+        const history = JSON.parse(localStorage.getItem('datasetHistory') || '[]');
+        history.push({
+          filename: 'processed_dataset.csv',
+          date: new Date().toLocaleString(),
+          downloadUrl: url
+        });
+        localStorage.setItem('datasetHistory', JSON.stringify(history));
+        
+        // ✅ Save latestDataset for preview
         localStorage.setItem('latestDataset', url);
-        const datasetHistory = JSON.parse(localStorage.getItem('datasetHistory') || '[]');
-        datasetHistory.push({ filename: file.name, date: new Date().toLocaleString() });
-        localStorage.setItem('datasetHistory', JSON.stringify(datasetHistory));
-
-        // Redirect to preview
+        
+        // Now go to preview
         setTimeout(() => {
           window.location.href = "preview.html";
         }, 500);
