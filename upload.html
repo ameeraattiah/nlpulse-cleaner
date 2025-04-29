@@ -223,53 +223,54 @@
         }
       });
     });
-
-    // Upload & Download
-    uploadBtn.addEventListener('click', async () => {
-      status.textContent = "";
-      const file = fileInput.files[0];
-      if (!file) {
-        status.textContent = "⚠️ Please select a file.";
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        window.location.href = "login.html";
         return;
       }
-      if (selectedOptions.size === 0) {
-        status.textContent = "⚠️ Please select at least one cleaning option.";
-        return;
-      }
-
-      const formData = new FormData();
-      formData.append('file', file);
-      selectedOptions.forEach(opt => formData.append('options[]', opt));
-      formData.append('format', 'csv');
-      status.textContent = "⏳ Processing...";
-
-      try {
-        const res = await fetch('https://nlpulse-cleaner-backend.onrender.com/process', {
-          method: 'POST',
-          body: formData
-        });
-
-        if (!res.ok) {
-          const error = await res.json();
-          status.textContent = `❌ ${error.error || "Processing failed."}`;
+    
+      uploadBtn.addEventListener('click', async () => {
+        status.textContent = "";
+        const file = fileInput.files[0];
+        if (!file) {
+          status.textContent = "⚠️ Please select a file.";
           return;
         }
-        const blob = await res.blob();
-        const url = URL.createObjectURL(blob);
-        
-        // Download immediately
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'processed_dataset.csv';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-
-        import { doc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-firestore.js";
-        
-        const user = auth.currentUser;
-        if (user) {
+        if (selectedOptions.size === 0) {
+          status.textContent = "⚠️ Please select at least one cleaning option.";
+          return;
+        }
+    
+        const formData = new FormData();
+        formData.append('file', file);
+        selectedOptions.forEach(opt => formData.append('options[]', opt));
+        formData.append('format', 'csv');
+        status.textContent = "⏳ Processing...";
+    
+        try {
+          const res = await fetch('https://nlpulse-cleaner-backend.onrender.com/process', {
+            method: 'POST',
+            body: formData
+          });
+    
+          if (!res.ok) {
+            const error = await res.json();
+            status.textContent = `❌ ${error.error || "Processing failed."}`;
+            return;
+          }
+    
+          const blob = await res.blob();
+          const url = URL.createObjectURL(blob);
+    
+          // Download file immediately
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = file.name.replace(/\.csv$/, '_cleaned.csv');
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+    
+          // ✅ Save to Firestore
           const userDocRef = doc(db, "users", user.uid);
           await updateDoc(userDocRef, {
             history: arrayUnion({
@@ -278,23 +279,19 @@
               downloadUrl: url
             })
           });
+    
+          // Redirect
+          setTimeout(() => {
+            window.location.href = "preview.html";
+          }, 500);
+    
+        } catch (err) {
+          console.error(err);
+          status.textContent = "❌ Error processing the dataset.";
         }
-                
-        // Now go to preview
-        setTimeout(() => {
-          window.location.href = "preview.html";
-        }, 500);
-
-      } catch (err) {
-        console.error(err);
-        status.textContent = "❌ Error processing the dataset.";
-      }
+      });
     });
 
-    // Protect the page: force login
-    onAuthStateChanged(auth, user => {
-      if (!user) window.location.href = "login.html";
-    });
   </script>
 
 </body>
