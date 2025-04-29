@@ -189,7 +189,8 @@
         await setDoc(doc(db, "users", uid), {
           username,
           email,
-          phone
+          phone,
+          history: []  // 🟦 initializes empty history for each user
         });
         window.location.href = "dashboard.html";
       } catch (err) {
