@@ -263,15 +263,6 @@
 
           const text = await res.text();
           localStorage.setItem("latestDatasetText", text);
-
-    
-          // Download file immediately
-          const link = document.createElement('a');
-          link.href = url;
-          link.download = file.name.replace(/\.csv$/, '_cleaned.csv');
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
     
           // ✅ Save to Firestore
           const userDocRef = doc(db, "users", user.uid);
@@ -279,9 +270,10 @@
             history: arrayUnion({
               filename: file.name.replace(/\.csv$/, '_cleaned.csv'),
               date: new Date().toLocaleString(),
-              downloadUrl: url
+              previewOnly: true
             })
           });
+
     
           // Redirect
           setTimeout(() => {
