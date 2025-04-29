@@ -171,7 +171,8 @@
     const datasetHistory = JSON.parse(localStorage.getItem('datasetHistory') || '[]');
 
     if (datasetHistory.length === 0) {
-      historyList.innerHTML = '<p>No past uploads yet.</p>';
+      historyList.innerHTML = '<p style="text-align: center; color: #5c6d5a;">🛑 No datasets cleaned yet.</p>';
+    
     } else {
         historyList.innerHTML = datasetHistory.map(item => 
           `<div class="history-item">
