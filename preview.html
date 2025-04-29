@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Preview Dataset - NLPulse Cleaner</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Preview Dataset – NLPulse Cleaner</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <script type="module" src="./firebase.js"></script>
   <style>
     * {
       margin: 0;
@@ -19,10 +18,11 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      text-align: center;
     }
 
     nav {
-      background-color: #5A7261;
+      background-color: #5A7A99;
       width: 100%;
       padding: 1rem 2rem;
       display: flex;
@@ -56,55 +56,37 @@
     main {
       flex: 1;
       padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
     }
 
     h2 {
-      color: #627357;
+      color: #5A7A99;
       margin-bottom: 1.5rem;
       font-size: 2rem;
     }
 
     table {
-      width: 90%;
-      max-width: 800px;
-      margin-top: 2rem;
       border-collapse: collapse;
-      background: white;
-      border-radius: 1rem;
+      margin: 0 auto;
+      background-color: white;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0px 8px 20px rgba(0,0,0,0.1);
     }
 
     th, td {
-      padding: 0.8rem 1rem;
-      border-bottom: 1px solid #eee;
-      font-size: 0.95rem;
+      border: 1px solid #ccc;
+      padding: 8px 12px;
       text-align: left;
-      color: #5c6d5a;
     }
 
     th {
-      background-color: #e4ebe1;
-      color: #4a5c49;
-    }
-
-    button {
-      background-color: #627357;
+      background-color: #5A7A99;
       color: white;
-      padding: 0.7rem 2rem;
-      border: none;
-      border-radius: 0.5rem;
-      margin-top: 1.5rem;
-      font-size: 1rem;
-      cursor: pointer;
     }
 
-    button:hover {
-      background-color: #55684d;
+    td {
+      background-color: #f9f9f9;
+      color: #333;
     }
 
     footer {
@@ -119,17 +101,17 @@
 
   <nav>
     <a href="index.html" class="logo">NLPulse Cleaner</a>
-    <div class="nav-links" id="nav-links">
-      <!-- Links will be injected -->
+    <div class="nav-links">
+      <a href="dashboard.html">Dashboard</a>
+      <a href="upload.html">Upload</a>
+      <a href="preview.html">Preview</a>
+      <a href="login.html" onclick="localStorage.clear()">Logout</a>
     </div>
   </nav>
 
   <main>
     <h2>Preview of Your Cleaned Dataset</h2>
-
-    <div id="tableContainer"></div>
-
-    <button id="downloadBtn">Download Processed Dataset</button>
+    <div id="previewContainer"></div>
   </main>
 
   <footer>
@@ -137,52 +119,36 @@
   </footer>
 
   <script type="module">
-    const previewContainer = document.createElement("div");
-    previewContainer.style.marginTop = "1.5rem";
-    document.body.appendChild(previewContainer);
-  
+    const container = document.getElementById("previewContainer");
     const url = localStorage.getItem("latestDataset");
-  
+
     if (!url) {
-      previewContainer.innerHTML = "<p style='color: red;'>⚠️ No dataset found. Please upload and process a dataset first.</p>";
+      container.innerHTML = "<p style='color: red;'>⚠️ No dataset found. Please upload and process a dataset first.</p>";
     } else {
       fetch(url)
         .then(res => res.text())
         .then(text => {
           const rows = text.trim().split("\n").slice(0, 10);
           const table = document.createElement("table");
-          table.style.borderCollapse = "collapse";
-          table.style.margin = "auto";
-          table.style.backgroundColor = "white";
-          table.style.boxShadow = "0px 4px 10px rgba(0,0,0,0.1)";
-          table.style.borderRadius = "8px";
-          table.style.overflow = "hidden";
-  
+
           rows.forEach((row, i) => {
             const tr = document.createElement("tr");
             row.split(",").forEach(cell => {
               const el = document.createElement(i === 0 ? "th" : "td");
               el.textContent = cell.trim();
-              el.style.border = "1px solid #ccc";
-              el.style.padding = "8px 12px";
-              el.style.textAlign = "left";
-              el.style.backgroundColor = i === 0 ? "#5A7A99" : "#f9f9f9";
-              el.style.color = i === 0 ? "white" : "#333";
               tr.appendChild(el);
             });
             table.appendChild(tr);
           });
-  
-          previewContainer.innerHTML = "<h3 style='color:#5A7A99;'>Preview of First 10 Rows</h3>";
-          previewContainer.appendChild(table);
+
+          container.innerHTML = "<h3 style='color:#5A7A99; margin-bottom: 1rem;'>First 10 Rows:</h3>";
+          container.appendChild(table);
         })
         .catch(() => {
-          previewContainer.innerHTML = "<p style='color: red;'>❌ Failed to load dataset preview.</p>";
+          container.innerHTML = "<p style='color: red;'>❌ Failed to load dataset preview.</p>";
         });
     }
   </script>
-  
 
 </body>
 </html>
-
