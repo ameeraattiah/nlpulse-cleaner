@@ -11,7 +11,7 @@
       margin: 0;
       padding: 0;
       font-family: 'Inter', sans-serif;
-      background: url('backgrounds/woman.png') no-repeat center center fixed;
+      background: url('woman.png') no-repeat center center fixed;
       background-size: cover;
       position: relative;
     }
@@ -44,9 +44,19 @@
       text-align: center;
     }
 
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #333;
+      float: right;
+      cursor: pointer;
+    }
+
     h2 {
       color: #4b6174;
       margin-bottom: 1.5rem;
+      clear: both;
     }
 
     input[type="text"],
@@ -135,14 +145,13 @@
   </style>
 </head>
 <body>
+
   <nav>
     <a href="index.html" class="logo">NLPulse Cleaner</a>
   </nav>
 
   <div class="container">
-    <div style="text-align: right;">
-      <button onclick="window.location.href='index.html'" style="background: none; border: none; font-size: 1.5rem; color: #333; cursor: pointer;">×</button>
-    </div>
+    <button class="close-btn" onclick="window.location.href='index.html'">×</button>
     <h2>Create Your Account</h2>
     <input type="text" id="username" placeholder="Username" required />
     <input type="email" id="email" placeholder="Email" required />
@@ -197,7 +206,7 @@
           username,
           email,
           phone,
-          history: []  // 🟦 initializes empty history for each user
+          history: []
         });
         window.location.href = "dashboard.html";
       } catch (err) {
@@ -207,7 +216,7 @@
 
     document.getElementById("googleSignup").addEventListener("click", async () => {
       try {
-        const result = await signInWithPopup(auth, provider);
+        await signInWithPopup(auth, provider);
         window.location.href = "dashboard.html";
       } catch (err) {
         status.textContent = err.message;
@@ -216,7 +225,7 @@
 
     document.getElementById("githubSignup").addEventListener("click", async () => {
       try {
-        const result = await signInWithPopup(auth, githubProvider);
+        await signInWithPopup(auth, githubProvider);
         window.location.href = "dashboard.html";
       } catch (err) {
         status.textContent = err.message;
