@@ -30,9 +30,10 @@
       width: 100%;
       padding: 1rem 2rem;
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-end;
       align-items: center;
     }
+
 
     nav .logo {
       color: white;
@@ -85,29 +86,28 @@
       background-color: #264866;
       color: white;
       text-decoration: none;
-      padding: 0.8rem 2.5rem;
+      padding: 0.8rem 3.5rem; /* wider padding */
       border-radius: 10px;
       font-weight: bold;
-      font-size: 1.1rem;
+      font-size: 1.3rem;      /* slightly larger */
       box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.15);
       margin-bottom: 2.5rem;
+      min-width: 340px;       /* locks it to a decent width */
     }
-
-
     .upload-button:hover {
-      background-color: #55684d;
+      background-color: #d0e8ff;  /* light blue */
+      color: #1a1a1a;             /* dark text */
       transform: translateY(-2px);
     }
 
     .history-list {
-      width: 90%;
-      max-width: 650px;
+      width: 95%;
+      max-width: 800px;
       background: white;
       padding: 2rem;
       border-radius: 2rem;
       box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
     }
-
 
     .history-item {
       padding: 0.5rem 0;
