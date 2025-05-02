@@ -102,8 +102,9 @@
       transform: translateY(-2px);
     }
     .history-list {
-      width: 95%;
-      max-width: 1900px;
+      width: 100%;
+      max-width: 1000px; /* 1000px is wide but not extreme */
+      margin: 0 auto;
       background: white;
       padding: 2rem;
       border-radius: 2rem;
@@ -167,7 +168,7 @@
     function renderNav(isLoggedIn) {
       if (isLoggedIn) {
         navLinks.innerHTML = `
-          <a href="upload.html" style="margin-top: 10px; font-weight: bold; font-size: 1.1rem;>Upload</a>
+          <a href="upload.html" style="margin-top: 10px; font-weight: bold; font-size: 1.1rem;">Upload</a>
           <a href="index.html" onclick="logout()" style="margin-top: 10px; font-weight: bold; font-size: 1.1rem;">Logout</a>
         `;
       } else {
