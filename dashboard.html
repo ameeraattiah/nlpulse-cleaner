@@ -165,10 +165,8 @@
     function renderNav(isLoggedIn) {
       if (isLoggedIn) {
         navLinks.innerHTML = `
-          <a href="dashboard.html">Dashboard</a>
-          // <a href="upload.html">Upload</a>
-          // <a href="preview.html">Preview</a>
-          <a href="#" onclick="logout()">Logout</a>
+
+          <a href="index.html" onclick="logout()">Logout</a>
         `;
       } else {
         window.location.href = "login.html";
