@@ -97,11 +97,10 @@
       min-width: 340px;       /* locks it to a decent width */
     }
     .upload-button:hover {
-      background-color: #d0e8ff;  /* light blue */
+      background-color: #f5f0e6;  /* light beige */
       color: #1a1a1a;             /* dark text */
       transform: translateY(-2px);
     }
-
     .history-list {
       width: 95%;
       max-width: 900px;
@@ -168,8 +167,7 @@
     function renderNav(isLoggedIn) {
       if (isLoggedIn) {
         navLinks.innerHTML = `
-
-          <a href="index.html" onclick="logout()">Logout</a>
+          <a href="index.html" onclick="logout()" style="margin-top: 10px; font-weight: bold; font-size: 1.1rem;">Logout</a>
         `;
       } else {
         window.location.href = "login.html";
