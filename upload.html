@@ -41,18 +41,21 @@
     }
 
     .upload-box {
-      border: 2px dashed #8ab4f8;
-      padding: 1.5rem;
+      border: 2px dashed #4d7ca8;          /* muted blue */
+      padding: 2rem;
+      text-align: center;
       border-radius: 1rem;
-      background: #dceafc;
+      background: #eaf1f8;                 /* light muted blue background */
+      transition: background-color 0.3s, border-color 0.3s;
       cursor: pointer;
       margin-bottom: 2rem;
-      transition: 0.3s;
+      max-width: 500px;
+      width: 100%;
     }
-
+    
     .upload-box.drag-over {
-      background-color: #dceae2;
-      border-color: #5A7A99;
+      border-color: #2e5c85;              /* darker blue */
+      background-color: #d4e3f1;
     }
 
     .upload-box input[type="file"] {
@@ -81,21 +84,21 @@
     }
 
     .option-btn {
-      background: #6a87a1;
-      color: white;
-      padding: 0.6rem 1rem;
+      padding: 0.6rem 1.4rem;
       border: none;
-      border-radius: 20px;
+      border-radius: 20px 40px 40px 20px; /* curved left like SELECT ALL */
+      background: #5a7a99;
+      color: white;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s;
-      clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
+      transition: all 0.3s ease;
     }
-
+    
     .option-btn:hover,
     .option-btn.active {
-      background-color: #3f5b73;
+      background-color: #3e5a74;          /* darker when active */
     }
+
 
     .select-format {
       display: flex;
@@ -152,32 +155,47 @@
       font-size: 0.9rem;
       color: #8d9d7f;
 
-    .format-options {
+    .format-group {
       display: flex;
-      justify-content: center;
       gap: 1rem;
-      margin-bottom: 1rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
     }
     
-    .format-options label {
-      background-color: #f1f1f1;
-      padding: 0.6rem 1.2rem;
-      border-radius: 1rem;
-      border: 2px solid #ccc;
+    .format-group label {
+      display: flex;
+      align-items: center;
       cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #f4f7fb;
+      padding: 0.6rem 1.2rem;
+      font-weight: 500;
     }
     
-    .format-options input[type="radio"] {
+    .format-group input[type="radio"] {
       display: none;
     }
     
-    .format-options input[type="radio"]:checked + label,
-    .format-options label:hover {
-      background-color: #264866;
-      color: white;
-      border-color: #264866;
+    .format-group input[type="radio"]:checked + span {
+      background: #d0e3f0;
+      border-radius: 8px;
+      padding: 0.2rem 0.5rem;
+      color: #264866;
+    }
+
+    .steps-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .option-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
     }
 
     }
@@ -193,23 +211,25 @@
     </div>
 
     <div class="cleaning-section-title">Choose cleaning steps:</div>
-    <button id="selectAllBtn" class="option-btn select-all">SELECT ALL</button>
-    <div class="option-buttons">
-      <button class="option-btn" data-value="tokenization">Tokenization</button>
-      <button class="option-btn" data-value="normalization">Normalization</button>
-      <button class="option-btn" data-value="deduplication">Deduplication</button>
-      <button class="option-btn" data-value="diacritics">Diacritics</button>
-      <button class="option-btn" data-value="blocklist">Blocklist</button>
-      <button class="option-btn" data-value="language">Language Detection</button>
-      <button class="option-btn" data-value="html">HTML Cleaning</button>
-      <button class="option-btn" data-value="noise">Noise Removal</button>
+    <div class="steps-wrapper">
+      <button id="selectAllBtn" class="option-btn select-all">SELECT ALL</button>
+      <div class="option-buttons">
+        <button class="option-btn" data-value="tokenization">Tokenization</button>
+        <button class="option-btn" data-value="normalization">Normalization</button>
+        <button class="option-btn" data-value="deduplication">Deduplication</button>
+        <button class="option-btn" data-value="diacritics">Diacritics</button>
+        <button class="option-btn" data-value="blocklist">Blocklist</button>
+        <button class="option-btn" data-value="language">Language Detection</button>
+        <button class="option-btn" data-value="html">HTML Cleaning</button>
+        <button class="option-btn" data-value="noise">Noise Removal</button>
+      </div>
     </div>
 
     <div class="format-section-title">Choose file format:</div>
-      <div class="format-options">
-        <label><input type="radio" name="downloadFormat" value="csv" checked> CSV</label>
-        <label><input type="radio" name="downloadFormat" value="json"> JSON</label>
-        <label><input type="radio" name="downloadFormat" value="xlsx"> XLSX</label>
+      <div class="format-group">
+        <label><input type="radio" name="format" value="csv" checked><span>CSV</span></label>
+        <label><input type="radio" name="format" value="json"><span>JSON</span></label>
+        <label><input type="radio" name="format" value="xlsx"><span>XLSX</span></label>
       </div>
     </div>
 
@@ -303,7 +323,7 @@
         const formData = new FormData();
         formData.append('file', file);
         selectedOptions.forEach(opt => formData.append('options[]', opt));
-        const downloadFormat = document.querySelector('input[name="downloadFormat"]:checked').value;
+        const downloadFormat = document.querySelector('input[name="format"]:checked').value;
         formData.append('format', downloadFormat);
 
         status.textContent = "⏳ Processing...";
