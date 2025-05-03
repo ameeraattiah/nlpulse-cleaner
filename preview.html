@@ -62,24 +62,30 @@
       background-color: #1c2f48;
     }
 
-    .secondary-actions {
+    .secondary-actions-column {
       display: flex;
-      gap: 1rem;
-      justify-content: center;
+      flex-direction: column;
+      gap: 0.75rem;
+      margin-top: 0.5rem;
     }
-
-    .secondary-actions a {
+    
+    .secondary-actions-column a {
       background-color: #B4C8D4;
       color: #183B56;
-      padding: 0.75rem 2rem;
+      padding: 0.75rem 0;
       border-radius: 12px;
       text-decoration: none;
       font-weight: 600;
       transition: background 0.3s;
+      width: 100%;
+      display: block;
+      text-align: center;
+    }
+    
+    .secondary-actions-column a:hover {
+      background-color: #9fb5c3;
     }
 
-    .secondary-actions a:hover {
-      background-color: #9fb5c3;
     }
   </style>
 </head>
@@ -87,11 +93,14 @@
   <div class="card">
     <h1>THE DATASET DOWNLOADED SUCCESSFULLY!</h1>
     <p>If it didn’t download, press download again...</p>
+    
     <button class="primary-btn" onclick="downloadAgain()">Download Again</button>
-    <div class="secondary-actions">
+    
+    <div class="secondary-actions-column">
       <a href="dashboard.html">Dashboard</a>
       <a href="upload.html">Upload</a>
     </div>
+
   </div>
 
   <script>
