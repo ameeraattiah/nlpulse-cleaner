@@ -16,6 +16,7 @@
       font-family: 'Inter', sans-serif;
       background: url('backgrounds/preview.png') no-repeat center center fixed;
       background-size: cover;
+      background-attachment: scroll; /* Or remove completely */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -139,30 +140,39 @@
     </div>
   </div>
 
-  <script>
-    function downloadAgain() {
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+  
+    // Navbar dynamic rendering
+    const navLinks = document.getElementById('nav-links');
+  
+    function renderNav(isLoggedIn) {
+      if (isLoggedIn) {
+        navLinks.innerHTML = `
+          <a href="dashboard.html" style="margin-top: 10px; font-weight: bold; font-size: 1.1rem;">Dashboard</a>
+          <a href="upload.html" style="margin-top: 10px; font-weight: bold; font-size: 1.1rem;">Upload</a>
+          <a href="#" onclick="logout()" style="margin-top: 10px; font-weight: bold; font-size: 1.1rem;">Logout</a>
+        `;
+      } else {
+        window.location.href = "login.html";
+      }
+    }
+  
+    function logout() {
+      signOut(auth).then(() => {
+        window.location.href = "login.html";
+      });
+    }
+  
+    onAuthStateChanged(auth, (user) => {
+      renderNav(!!user);
+    });
+  
+    // ✅ Download Again Button
+    window.downloadAgain = function () {
       const url = localStorage.getItem("latestDatasetURL");
       const format = localStorage.getItem("latestDatasetFormat") || "csv";
-// Navbar dynamic rendering
-      const navLinks = document.getElementById('nav-links');
-  
-      function renderNav(isLoggedIn) {
-        if (isLoggedIn) {
-          navLinks.innerHTML = `
-            <a href="dashboard.html" style="margin-top: 10px; font-weight: bold; font-size: 1.1rem;">Dashboard</a>
-            <a href="upload.html" style="margin-top: 10px; font-weight: bold; font-size: 1.1rem;">Upload</a>
-            <a href="https://ameeraattiah3.wixsite.com/nukhba-labs" onclick="logout()" style="margin-top: 10px; font-weight: bold; font-size: 1.1rem;">Logout</a>
-          `;
-        } else {
-          window.location.href = "login.html";
-        }
-      }
-  
-      function logout() {
-        signOut(auth).then(() => {
-          window.location.href = "login.html";
-        });
-      }
       if (url) {
         const a = document.createElement("a");
         a.href = url;
@@ -173,7 +183,8 @@
       } else {
         alert("No dataset found. Please go back to upload.");
       }
-    }
+    };
   </script>
+
 </body>
 </html>
