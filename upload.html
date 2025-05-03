@@ -37,8 +37,12 @@
       display: flex;
       justify-content: flex-end;
       align-items: center;
+      position: fixed;        /* ✅ Fix it to the top */
+      top: 0;
+      left: 0;
+      background: transparent; /* Optional: or use white if you want a solid header */
+      z-index: 1000;          /* ✅ Ensure it appears above everything else */
     }
-
 
     nav .logo {
       color: white;
