@@ -342,15 +342,17 @@
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
-          URL.revokeObjectURL(url);
-
-          // ✅ Save to Firestore
+          localStorage.setItem("latestDatasetText", text);  // for preview
+          localStorage.setItem("latestDatasetFormat", downloadFormat);  // optional
+          localStorage.setItem("latestDatasetURL", url);   // for download again
+          
           const userDocRef = doc(db, "users", user.uid);
           await updateDoc(userDocRef, {
             history: arrayUnion({
               filename: file.name.replace(/\.[^/.]+$/, `_cleaned.${downloadFormat}`),
               date: new Date().toLocaleString(),
-              previewOnly: true
+              downloadUrl: url  // ✅ this is what dashboard.html needs!
+
             })
           });
 
