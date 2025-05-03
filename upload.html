@@ -83,21 +83,22 @@
       width: 100%;
     }
     .option-btn {
-      padding: 0.6rem 1.4rem;
-      border-radius: 10px 30px 30px 10px; /* matches SELECT ALL style */
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 20px 40px 40px 20px; /* curved left */
       background: #5a7a99;
       color: white;
       font-weight: 600;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: all 0.3s ease;
+      min-width: 160px;
+      text-align: center;
     }
     
     .option-btn:hover,
     .option-btn.active {
-      background-color: #3a5a75;  /* darker on hover/active */
+      background-color: #3e5a74;
     }
-
-
 
     .select-format {
       display: flex;
@@ -131,9 +132,12 @@
       padding: 0.9rem 2rem;
       border-radius: 12px;
       font-size: 1.1rem;
-      margin-top: 1rem;
+      margin-top: 1.5rem;
       cursor: pointer;
       transition: background 0.3s;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .process-btn:hover {
@@ -184,9 +188,11 @@
     }
 
     .steps-wrapper {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.8rem;
+      justify-items: center;
+      margin-bottom: 1.5rem;
     }
     
     .select-all {
@@ -239,19 +245,17 @@
 
     <div class="cleaning-section-title">Choose cleaning steps:</div>
     <div class="steps-wrapper">
-      <div class="select-all-wrapper">
-        <button id="selectAllBtn" class="option-btn select-all">SELECT ALL</button>
-      </div>
-      <div class="option-buttons">
-        <button class="option-btn" data-value="tokenization">Tokenization</button>
-        <button class="option-btn" data-value="normalization">Normalization</button>
-        <button class="option-btn" data-value="deduplication">Deduplication</button>
-        <button class="option-btn" data-value="diacritics">Diacritics</button>
-        <button class="option-btn" data-value="blocklist">Blocklist</button>
-        <button class="option-btn" data-value="language">Language Detection</button>
-        <button class="option-btn" data-value="html">HTML Cleaning</button>
-        <button class="option-btn" data-value="noise">Noise Removal</button>
-      </div>
+      <button class="option-btn select-all" id="selectAllBtn">SELECT ALL</button>
+      <button class="option-btn" data-value="tokenization">Tokenization</button>
+      <button class="option-btn" data-value="normalization">Normalization</button>
+      <button class="option-btn" data-value="deduplication">Deduplication</button>
+      <button class="option-btn" data-value="diacritics">Diacritics</button>
+      <button class="option-btn" data-value="blocklist">Blocklist</button>
+      <button class="option-btn" data-value="language">Language Detection</button>
+      <button class="option-btn" data-value="html">HTML Cleaning</button>
+      <button class="option-btn" data-value="noise">Noise Removal</button>
+    </div>
+
 
 
 
