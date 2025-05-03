@@ -346,6 +346,7 @@
 
     // ✅ Auth check + Upload
     onAuthStateChanged(auth, user => {
+      renderNav(!!user); // 🔁 this renders your nav links dynamically
       if (!user) {
         window.location.href = "login.html";
         return;
