@@ -12,9 +12,10 @@
       box-sizing: border-box;
     }
 
-    body, html {
-      height: 100%;
+    html, body {
       font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      scroll-behavior: smooth;
     }
 
     .hero {
@@ -26,17 +27,9 @@
 
     .overlay {
       position: absolute;
-      top: 25%;
+      bottom: 22%;
       right: 10%;
       text-align: right;
-      color: white;
-    }
-
-    .overlay h1 {
-      font-size: 2rem;
-      line-height: 2.5rem;
-      margin-bottom: 1.2rem;
-      font-weight: 600;
     }
 
     .start-btn {
@@ -57,6 +50,7 @@
   </style>
 </head>
 <body>
+
   <div class="hero">
     <div class="overlay">
       <a href="login.html">
@@ -64,5 +58,6 @@
       </a>
     </div>
   </div>
+
 </body>
 </html>
