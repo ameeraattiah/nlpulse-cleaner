@@ -188,15 +188,7 @@
       color: #264866;
     }
 
-    .steps-wrapper {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-bottom: 1.5rem;
-      justify-items: center;
-      align-items: center;
-    }
-  
+    
     .select-all {
       align-self: flex-start;
       margin-bottom: 1rem;
@@ -229,6 +221,25 @@
       padding: 0.2rem 0.5rem;
       color: #264866;
     }
+    .steps-container {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      align-items: flex-start;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+    }
+    
+    .select-all-wrapper {
+      margin-top: 2.2rem; /* aligns with step grid */
+    }
+    
+    .option-buttons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+
   </style>
 </head>
 <body>
@@ -241,19 +252,21 @@
     </div>
 
     <div class="cleaning-section-title">Choose cleaning steps:</div>
-    <div class="steps-wrapper">
-      <button class="option-btn select-all" id="selectAllBtn">SELECT ALL</button>
-      <button class="option-btn" data-value="tokenization">Tokenization</button>
-      <button class="option-btn" data-value="normalization">Normalization</button>
-      <button class="option-btn" data-value="deduplication">Deduplication</button>
-      <button class="option-btn" data-value="diacritics">Diacritics</button>
-      <button class="option-btn" data-value="blocklist">Blocklist</button>
-      <button class="option-btn" data-value="language">Language Detection</button>
-      <button class="option-btn" data-value="html">HTML Cleaning</button>
-      <button class="option-btn" data-value="noise">Noise Removal</button>
+    <div class="steps-container">
+      <div class="select-all-wrapper">
+        <button class="option-btn select-all" id="selectAllBtn">SELECT ALL</button>
+      </div>
+      <div class="option-buttons">
+        <button class="option-btn" data-value="tokenization">Tokenization</button>
+        <button class="option-btn" data-value="normalization">Normalization</button>
+        <button class="option-btn" data-value="deduplication">Deduplication</button>
+        <button class="option-btn" data-value="diacritics">Diacritics</button>
+        <button class="option-btn" data-value="blocklist">Blocklist</button>
+        <button class="option-btn" data-value="language">Language Detection</button>
+        <button class="option-btn" data-value="html">HTML Cleaning</button>
+        <button class="option-btn" data-value="noise">Noise Removal</button>
+      </div>
     </div>
-
-
 
 
     <div class="format-section-title">Choose file format:</div>
