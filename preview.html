@@ -30,9 +30,9 @@
       text-align: center;
       max-width: 500px;
       width: 90%;
-      margin-top: 80px; /* 👈 Add this line */
+      margin-top: 80px;
     }
-    
+
     h1 {
       color: #183B56;
       font-size: 1.8rem;
@@ -44,6 +44,7 @@
       font-size: 1rem;
       margin-bottom: 2rem;
     }
+
     .primary-btn {
       background-color: #2D4C74;
       color: white;
@@ -58,11 +59,11 @@
       transition: background 0.3s;
       max-width: 340px;
     }
-    
+
     .primary-btn:hover {
       background-color: #1c2f48;
     }
-    
+
     .secondary-actions-row {
       display: flex;
       justify-content: center;
@@ -73,7 +74,7 @@
       margin-left: auto;
       margin-right: auto;
     }
-    
+
     .secondary-actions-row a {
       flex: 1;
       text-align: center;
@@ -85,42 +86,37 @@
       font-weight: 600;
       transition: background 0.3s;
     }
-    
+
     .secondary-actions-row a:hover {
       background-color: #9fb5c3;
     }
-
-
   </style>
 </head>
 <body>
   <div class="card">
     <h1>THE DATASET DOWNLOADED SUCCESSFULLY!</h1>
     <p>If it didn’t download, press download again...</p>
-    
+
     <button class="primary-btn" onclick="downloadAgain()">Download Again</button>
-    
+
     <div class="secondary-actions-row">
       <a href="dashboard.html">Dashboard</a>
       <a href="upload.html">Upload</a>
     </div>
-
-
   </div>
 
   <script>
     function downloadAgain() {
-      const text = localStorage.getItem("latestDatasetText");
-      if (text) {
-        const blob = new Blob([text], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
+      const url = localStorage.getItem("latestDatasetURL");
+      const format = localStorage.getItem("latestDatasetFormat") || "csv";
+
+      if (url) {
         const a = document.createElement("a");
         a.href = url;
-        a.download = "cleaned_dataset.csv";  // Change this extension if needed
+        a.download = `cleaned_dataset.${format}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(url);  // Clean up memory
       } else {
         alert("No dataset found. Please go back to upload.");
       }
