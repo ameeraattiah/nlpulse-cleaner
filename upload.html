@@ -223,14 +223,12 @@
       color: #264866;
     }
     .steps-container {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem; /* uniform spacing */
+      justify-items: center;
       margin-bottom: 1.5rem;
-      flex-wrap: wrap;
     }
-    
     .select-all-wrapper {
       margin-top: 2.2rem; /* aligns with step grid */
     }
