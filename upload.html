@@ -12,15 +12,15 @@
       padding: 0;
       box-sizing: border-box;
     }
-
+    
     body {
       font-family: 'Inter', sans-serif;
       background: url('backgrounds/dashboard-bg.png') no-repeat center center fixed;
       background-size: cover;
       min-height: 100vh;
-      padding-top: 8rem; /* Controls the vertical offset of the card */
+      padding-top: 8rem;
     }
-
+    
     main {
       margin: 0 auto;
       background-color: white;
@@ -31,17 +31,17 @@
       width: 90%;
       text-align: center;
     }
-
+    
     h2 {
       color: #5A7A99;
       margin-bottom: 1rem;
       font-size: 1.8rem;
     }
-
+    
     .upload-box {
       border: 2px dashed #4d7ca8;
       padding: 2rem;
-      background: #e0edf8; /* softer muted blue */
+      background: #e0edf8;
       border-radius: 1rem;
       transition: background-color 0.3s, border-color 0.3s;
       cursor: pointer;
@@ -54,17 +54,17 @@
       border-color: #2e5c85;
       background-color: #d0e0f2;
     }
-
+    
     .upload-box input[type="file"] {
       display: none;
     }
-
+    
     #dropText {
       font-size: 1rem;
       color: #264866;
       font-weight: 600;
     }
-
+    
     .cleaning-section-title,
     .format-section-title {
       font-weight: 600;
@@ -73,103 +73,57 @@
       font-size: 1.1rem;
       color: #264866;
     }
-
+    
+    /* ✅ NEW CLEAN GRID */
+    .steps-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+    }
+    
     .option-buttons {
       display: grid;
-      grid-template-columns: repeat(3, 180px); /* fixed width */
+      grid-template-columns: repeat(3, 180px);
       gap: 1rem;
-      justify-content: center; /* center grid horizontally */
+      justify-content: center;
     }
-
-    #selectAllBtn {
-      margin-top: 2px; /* tweak this to align better */
-    }
-
+    
+    /* ✅ BUTTON STYLING */
     .option-btn {
-      padding: 0.75rem 1rem;
+      width: 180px;
+      height: 45px;
       border: none;
       background: #5a7a99;
       color: white;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
-      width: 180px;
-      height: 45px;
-      text-align: left;
-      position: relative;
-      clip-path: polygon(0% 0%, 85% 0%, 100% 50%, 85% 100%, 0% 100%);
+      border-radius: 8px;
+      transition: background 0.3s ease;
     }
     
     .option-btn:hover,
     .option-btn.active {
       background-color: #3e5a74;
     }
-
-    .select-format {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-
-    select {
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      border-radius: 8px;
-      border: 1px solid #aaa;
-    }
+    
+    /* ✅ SELECT ALL SPECIAL STYLE */
     .select-all {
       background-color: #1e2e3f;
       color: white;
-      font-weight: 700;
+      font-weight: bold;
       border-radius: 8px;
-      clip-path: none; /* remove arrow */
       height: 45px;
       width: 180px;
     }
     
-    .select-all:hover {
-      background-color: #3a5a75;
-    }
-
-    .process-btn {
-      background-color: #264866;
-      color: white;
-      font-weight: bold;
-      border: none;
-      padding: 1rem 2.5rem;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      margin: 2rem auto 0 auto;
-      width: 100%;
-      max-width: 600px;
-      text-align: center;
-      transition: background 0.3s;
-    }
-    .process-btn:hover {
-      background-color: #f5f0e6;
-      color: #1a1a1a;
-    }
-
-    #status {
-      margin-top: 1rem;
-      font-size: 0.9rem;
-      color: #5c6d5a;
-    }
-
-    footer {
-      margin-top: auto;
-      padding: 1rem;
-      text-align: center;
-      font-size: 0.9rem;
-      color: #8d9d7f;
-    }
+    /* ✅ FILE FORMAT */
     .format-group {
       display: flex;
       gap: 1rem;
       justify-content: center;
-      margin-bottom: 0.75rem; /* tighter spacing */
+      margin-bottom: 0.8rem; /* Reduced space */
     }
-
+    
     .format-group label {
       display: flex;
       align-items: center;
@@ -191,56 +145,40 @@
       padding: 0.2rem 0.5rem;
       color: #264866;
     }
-
     
-    .select-all {
-      align-self: flex-start;
-      margin-bottom: 1rem;
-    }
-        
-    .select-all-wrapper {
+    /* ✅ PROCESS BUTTON */
+    .process-btn {
+      background-color: #264866;
+      color: white;
+      font-weight: bold;
+      border: none;
+      padding: 1rem 2.5rem;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      margin: 1rem auto 0 auto;
       width: 100%;
-      display: flex;
-      justify-content: flex-start;
-    }
-    .radio-btn {
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      padding: 0.6rem 1.2rem;
-      background: #f5f7fa;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      font-weight: 500;
-      transition: all 0.3s;
+      max-width: 600px;
+      text-align: center;
+      transition: background 0.3s;
     }
     
-    .radio-btn input[type="radio"] {
-      display: none;
+    .process-btn:hover {
+      background-color: #f5f0e6;
+      color: #1a1a1a;
     }
     
-    .radio-btn input[type="radio"]:checked + span {
-      background-color: #d0e3f0;
-      border-radius: 8px;
-      padding: 0.2rem 0.5rem;
-      color: #264866;
-    }
-    .steps-container {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem; /* uniform spacing */
-      justify-items: center;
-      margin-bottom: 1.5rem;
-    }
-    .select-all-wrapper {
-      margin-top: 2.2rem; /* aligns with step grid */
+    #status {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #5c6d5a;
     }
     
-    .option-buttons {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      width: 100%;
+    footer {
+      margin-top: auto;
+      padding: 1rem;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #8d9d7f;
     }
 
   </style>
