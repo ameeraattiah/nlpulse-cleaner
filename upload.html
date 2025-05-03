@@ -80,21 +80,20 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 1rem;
-      justify-items: center;
       width: 100%;
     }
+
     .option-btn {
-      padding: 0.6rem 1.2rem;
+      padding: 0.75rem 1.2rem;
       border: none;
-      border-radius: 20px 40px 40px 20px; /* curved left */
+      border-radius: 20px 40px 40px 20px; /* arrow style */
       background: #5a7a99;
       color: white;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
       width: 100%;
-      max-width: 180px;
-      text-align: center;
+      text-align: left;
     }
     
     .option-btn:hover,
@@ -117,10 +116,11 @@
     .select-all {
       background-color: #264866;
       color: white;
-      border-radius: 10px;
+      border-radius: 20px 40px 40px 20px;
       font-weight: bold;
       margin-bottom: 1rem;
     }
+
     
     .select-all:hover {
       background-color: #3a5a75;
@@ -135,12 +135,11 @@
       border-radius: 12px;
       font-size: 1.1rem;
       margin: 2rem auto 0 auto;
-      width: 220px;
-      display: block;
+      width: 100%;
+      max-width: 600px;
       text-align: center;
       transition: background 0.3s;
     }
-
     .process-btn:hover {
       background-color: #f5f0e6;
       color: #1a1a1a;
@@ -252,11 +251,10 @@
     </div>
 
     <div class="cleaning-section-title">Choose cleaning steps:</div>
+
     <div class="steps-container">
-      <div class="select-all-wrapper">
-        <button class="option-btn select-all" id="selectAllBtn">SELECT ALL</button>
-      </div>
       <div class="option-buttons">
+        <button class="option-btn select-all" id="selectAllBtn">SELECT ALL</button>
         <button class="option-btn" data-value="tokenization">Tokenization</button>
         <button class="option-btn" data-value="normalization">Normalization</button>
         <button class="option-btn" data-value="deduplication">Deduplication</button>
