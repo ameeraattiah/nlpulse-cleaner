@@ -43,7 +43,6 @@
       font-size: 1rem;
       margin-bottom: 2rem;
     }
-
     .primary-btn {
       background-color: #2D4C74;
       color: white;
@@ -56,34 +55,40 @@
       width: 100%;
       margin-bottom: 1.5rem;
       transition: background 0.3s;
+      max-width: 320px;
     }
-
+    
     .primary-btn:hover {
       background-color: #1c2f48;
     }
-
+    
     .secondary-actions-row {
       display: flex;
       justify-content: center;
       gap: 1rem;
-      margin-top: 1rem;
+      margin-top: 0.5rem;
+      width: 100%;
+      max-width: 320px;
+      margin-left: auto;
+      margin-right: auto;
     }
     
     .secondary-actions-row a {
+      flex: 1;
+      text-align: center;
       background-color: #B4C8D4;
       color: #183B56;
-      padding: 0.75rem 2rem;
+      padding: 0.75rem 0;
       border-radius: 12px;
       text-decoration: none;
       font-weight: 600;
       transition: background 0.3s;
-      text-align: center;
-      min-width: 130px;
     }
     
     .secondary-actions-row a:hover {
       background-color: #9fb5c3;
     }
+
 
   </style>
 </head>
@@ -98,6 +103,7 @@
       <a href="dashboard.html">Dashboard</a>
       <a href="upload.html">Upload</a>
     </div>
+
 
   </div>
 
