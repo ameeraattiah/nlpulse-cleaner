@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Upload Dataset - NLPulse Cleaner</title>
+  <title>Upload Dataset - Nukhba Labs</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <script type="module" src="./firebase.js"></script>
   <style>
@@ -41,11 +41,10 @@
     }
 
     .upload-box {
-      border: 2px dashed #4d7ca8;          /* muted blue */
+      border: 2px dashed #4d7ca8;
       padding: 2rem;
-      text-align: center;
+      background: #e0edf8; /* softer muted blue */
       border-radius: 1rem;
-      background: #eaf1f8;                 /* light muted blue background */
       transition: background-color 0.3s, border-color 0.3s;
       cursor: pointer;
       margin-bottom: 2rem;
@@ -54,8 +53,8 @@
     }
     
     .upload-box.drag-over {
-      border-color: #2e5c85;              /* darker blue */
-      background-color: #d4e3f1;
+      border-color: #2e5c85;
+      background-color: #d0e0f2;
     }
 
     .upload-box input[type="file"] {
@@ -85,19 +84,19 @@
 
     .option-btn {
       padding: 0.6rem 1.4rem;
-      border: none;
-      border-radius: 20px 40px 40px 20px; /* curved left like SELECT ALL */
+      border-radius: 10px 30px 30px 10px; /* matches SELECT ALL style */
       background: #5a7a99;
       color: white;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: background 0.3s ease;
     }
     
     .option-btn:hover,
     .option-btn.active {
-      background-color: #3e5a74;          /* darker when active */
+      background-color: #3a5a75;  /* darker on hover/active */
     }
+
 
 
     .select-format {
@@ -154,7 +153,7 @@
       text-align: center;
       font-size: 0.9rem;
       color: #8d9d7f;
-
+    }
     .format-group {
       display: flex;
       gap: 1rem;
@@ -197,7 +196,32 @@
       flex-wrap: wrap;
       gap: 1rem;
     }
-
+    .select-all-wrapper {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+    }
+    .radio-btn {
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      padding: 0.6rem 1.2rem;
+      background: #f5f7fa;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    
+    .radio-btn input[type="radio"] {
+      display: none;
+    }
+    
+    .radio-btn input[type="radio"]:checked + span {
+      background-color: #d0e3f0;
+      border-radius: 8px;
+      padding: 0.2rem 0.5rem;
+      color: #264866;
     }
   </style>
 </head>
@@ -212,7 +236,9 @@
 
     <div class="cleaning-section-title">Choose cleaning steps:</div>
     <div class="steps-wrapper">
-      <button id="selectAllBtn" class="option-btn select-all">SELECT ALL</button>
+      <div class="select-all-wrapper">
+        <button id="selectAllBtn" class="option-btn select-all">SELECT ALL</button>
+      </div>
       <div class="option-buttons">
         <button class="option-btn" data-value="tokenization">Tokenization</button>
         <button class="option-btn" data-value="normalization">Normalization</button>
@@ -223,16 +249,25 @@
         <button class="option-btn" data-value="html">HTML Cleaning</button>
         <button class="option-btn" data-value="noise">Noise Removal</button>
       </div>
-    </div>
+
+
 
     <div class="format-section-title">Choose file format:</div>
-      <div class="format-group">
-        <label><input type="radio" name="format" value="csv" checked><span>CSV</span></label>
-        <label><input type="radio" name="format" value="json"><span>JSON</span></label>
-        <label><input type="radio" name="format" value="xlsx"><span>XLSX</span></label>
-      </div>
+    <div class="format-group" role="group" aria-label="File format">
+      <label class="radio-btn">
+        <input type="radio" name="format" value="csv" checked>
+        <span>CSV</span>
+      </label>
+      <label class="radio-btn">
+        <input type="radio" name="format" value="json">
+        <span>JSON</span>
+      </label>
+      <label class="radio-btn">
+        <input type="radio" name="format" value="xlsx">
+        <span>XLSX</span>
+      </label>
     </div>
-
+      
     <button class="process-btn" id="uploadBtn">Process Dataset</button>
     <p id="status"></p>
   </main>
