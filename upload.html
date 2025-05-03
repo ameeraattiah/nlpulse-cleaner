@@ -1,12 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Upload Dataset - NLPulse Cleaner</title>
+  <title>Upload Dataset – NLPulse Cleaner</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <script type="module" src="./firebase.js"></script>
   <style>
     * {
       margin: 0;
@@ -15,288 +13,161 @@
     }
 
     body {
+      font-family: 'Inter', sans-serif;
       background: url('backgrounds/dashboard-bg.png') no-repeat center center fixed;
       background-size: cover;
-      font-family: 'Inter', sans-serif;
       display: flex;
       flex-direction: column;
+      align-items: center;
       min-height: 100vh;
     }
 
-    nav {
-      width: 100%;
-      padding: 1rem 2rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    nav .logo {
-      color: white;
-      font-size: 1.8rem;
-      font-weight: bold;
-      text-decoration: none;
-    }
-
-    nav .nav-links {
-      display: flex;
-      gap: 1.5rem;
-    }
-
-    nav .nav-links a {
-      color: white;
-      text-decoration: none;
-      font-size: 1rem;
-      transition: opacity 0.3s;
-    }
-
-    nav .nav-links a:hover {
-      opacity: 0.8;
-    }
-
-    main {
-      flex: 1;
-      padding: 2rem;
+    .upload-container {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 2rem;
+      max-width: 850px;
+      width: 90%;
+      margin-top: 2rem;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
     }
 
-    h2 {
-      color: #5A7A99;
+    .top-logo {
+      max-height: 80px;
       margin-bottom: 1.5rem;
-      font-size: 2rem;
     }
 
-    .upload-box {
-      border: 2px dashed #b5c7b3;
-      padding: 2rem;
-      text-align: center;
-      border-radius: 1rem;
-      background: white;
-      transition: border-color 0.3s;
-      cursor: pointer;
-      margin-bottom: 2rem;
-      max-width: 500px;
+    .drop-zone {
       width: 100%;
+      border: 2px dashed #b5c7b3;
+      border-radius: 1rem;
+      background: #e7f0fd;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
     }
 
-    .upload-box.drag-over {
-      border-color: #5A7A99;
-      background-color: #f9fcf7;
-    }
-
-    .upload-box input[type="file"] {
+    .drop-zone input {
       display: none;
     }
 
-    .option-buttons {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1rem;
-      justify-content: center;
-      margin-bottom: 1.5rem;
+    .drop-zone:hover {
+      background-color: #f3f8ff;
     }
 
-    .option-btn {
-      padding: 0.8rem 1.5rem;
-      border: 2px solid #5A7A99;
-      border-radius: 0.5rem;
-      background: white;
-      color: #5A7A99;
+    .section-title {
+      font-weight: bold;
+      margin-bottom: 0.75rem;
+      font-size: 1.1rem;
+      color: #264866;
+    }
+
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(150px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .step-btn {
+      background-color: #5a7a99;
+      color: white;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: bold;
+      font-size: 0.95rem;
+      clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
+      cursor: pointer;
+    }
+
+    .step-btn.dark {
+      background-color: #264866;
+    }
+
+    .format-selector {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .format-btn {
+      padding: 0.8rem 2rem;
+      background: #edf0f4;
+      border-radius: 0.75rem;
       font-weight: bold;
       cursor: pointer;
-      transition: all 0.3s;
+      border: 1px solid #ccc;
     }
 
-    .option-btn.active {
-      background-color: #5A7A99;
+    .upload-final-btn {
+      background-color: #264866;
       color: white;
-    }
-
-    button {
-      background-color: #5A7A99;
-      color: white;
-      padding: 0.7rem 2rem;
-      border: none;
-      border-radius: 0.5rem;
-      font-size: 1rem;
+      padding: 0.9rem 3rem;
+      font-weight: bold;
+      font-size: 1.1rem;
+      border-radius: 0.75rem;
+      box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
       cursor: pointer;
-      margin-top: 1rem;
-    }
-
-    button:hover {
-      background-color: #4B6882;
-    }
-
-    #status {
-      margin-top: 1rem;
-      color: #5c6d5a;
     }
 
     footer {
+      margin-top: auto;
       padding: 1rem;
-      text-align: center;
       font-size: 0.9rem;
       color: #8d9d7f;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-
-  <nav>
-    <a href="index.html" class="logo">NLPulse Cleaner</a>
-    <div class="nav-links" id="nav-links"></div>
-  </nav>
-
-  <main>
-    <h2>Upload Your Arabic Dataset</h2>
-
-    <div class="upload-box" id="dropZone">
-      <p id="dropText">📁 Drop your file here or click to upload</p>
-      <input type="file" id="fileInput" accept=".csv,.json,.tsv,.xlsx" />
+  <main style="flex: 1; display: flex; align-items: center; justify-content: center;">
+    <div style="background: white; padding: 2rem 3rem; border-radius: 2rem; max-width: 850px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
+      
+      <img src="logo.png" alt="Nukhba Labs" style="height: 60px; margin-bottom: 1rem;" />
+      
+      <h2 style="color: #5A7A99; font-size: 1.8rem; margin-bottom: 1rem;">Upload Your Arabic Dataset</h2>
+  
+      <div class="upload-box" id="dropZone" style="margin: auto;">
+        <p id="dropText">📁 Drop your file here or click to upload</p>
+        <input type="file" id="fileInput" accept=".csv,.json,.tsv,.xlsx" />
+      </div>
+  
+      <h3 style="margin-top: 2rem; font-size: 1.1rem; color: #264866;">Choose cleaning steps:</h3>
+      <div class="option-buttons" style="margin-bottom: 1.5rem;">
+        <button class="option-btn" data-value="tokenization">Tokenization</button>
+        <button class="option-btn" data-value="normalization">Normalization</button>
+        <button class="option-btn" data-value="deduplication">Deduplication</button>
+        <button class="option-btn" data-value="diacritics">Diacritics</button>
+        <button class="option-btn" data-value="blocklist">Blocklist</button>
+        <button class="option-btn" data-value="language">Language Detection</button>
+        <button class="option-btn" data-value="html">HTML Cleaning</button>
+        <button class="option-btn" data-value="noise">Noise Removal</button>
+      </div>
+  
+      <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #264866;">Choose file format:</h3>
+      <select id="downloadFormat" style="margin-bottom: 1rem; padding: 0.5rem 1rem; border-radius: 10px; border: 1px solid #ccc;">
+        <option value="csv">Download as CSV</option>
+        <option value="json">Download as JSON</option>
+        <option value="xlsx">Download as XLSX</option>
+      </select>
+  
+      <br />
+      <button id="uploadBtn">Upload New Dataset</button>
+      <p id="status" style="margin-top: 1rem;"></p>
     </div>
-
-    <div class="option-buttons">
-      <button class="option-btn" data-value="tokenization">Tokenization</button>
-      <button class="option-btn" data-value="normalization">Normalization</button>
-      <button class="option-btn" data-value="deduplication">Deduplication</button>
-      <button class="option-btn" data-value="diacritics">Diacritics</button>
-      <button class="option-btn" data-value="blocklist">Blocklist</button>
-      <button class="option-btn" data-value="language">Language Detection</button>
-      <button class="option-btn" data-value="html">HTML Cleaning</button>
-      <button class="option-btn" data-value="noise">Noise Removal</button>
-    </div>
-    
-    <select id="downloadFormat" style="margin-bottom: 1rem; padding: 0.5rem; border-radius: 5px; border: 1px solid #ccc;">
-      <option value="csv">Download as CSV</option>
-      <option value="json">Download as JSON</option>
-      <option value="xlsx">Download as XLSX</option>
-    </select>
-
-    <button id="uploadBtn">Process Dataset</button>
-    <p id="status"></p>
   </main>
+
 
   <footer>
     © 2025 NLPulse Cleaner. All rights reserved.
   </footer>
-
-  <script type="module">
-    import { auth } from './firebase.js';
-    import { signOut } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
-    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
-    import { db } from './firebase.js';
-    import { doc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-firestore.js";
-
-    const fileInput = document.getElementById('fileInput');
-    const dropZone = document.getElementById('dropZone');
-    const dropText = document.getElementById('dropText');
-    const uploadBtn = document.getElementById('uploadBtn');
-    const status = document.getElementById('status');
-    const selectedOptions = new Set();
-
-    // Drag & Drop
-    dropZone.addEventListener('click', () => fileInput.click());
-    dropZone.addEventListener('dragover', e => {
-      e.preventDefault();
-      dropZone.classList.add('drag-over');
-    });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', e => {
-      e.preventDefault();
-      dropZone.classList.remove('drag-over');
-      const file = e.dataTransfer.files[0];
-      if (file) {
-        fileInput.files = e.dataTransfer.files;
-        dropText.textContent = `📄 ${file.name}`;
-      }
-    });
-    fileInput.addEventListener('change', () => {
-      if (fileInput.files.length) {
-        dropText.textContent = `📄 ${fileInput.files[0].name}`;
-      }
-    });
-
-    // Button toggle logic
-    document.querySelectorAll('.option-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const value = btn.dataset.value;
-        if (selectedOptions.has(value)) {
-          selectedOptions.delete(value);
-          btn.classList.remove('active');
-        } else {
-          selectedOptions.add(value);
-          btn.classList.add('active');
-        }
-      });
-    });
-    onAuthStateChanged(auth, user => {
-      if (!user) {
-        window.location.href = "login.html";
-        return;
-      }
-    
-      uploadBtn.addEventListener('click', async () => {
-        status.textContent = "";
-        const file = fileInput.files[0];
-        if (!file) {
-          status.textContent = "⚠️ Please select a file.";
-          return;
-        }
-        if (selectedOptions.size === 0) {
-          status.textContent = "⚠️ Please select at least one cleaning option.";
-          return;
-        }
-    
-        const formData = new FormData();
-        formData.append('file', file);
-        selectedOptions.forEach(opt => formData.append('options[]', opt));
-        const downloadFormat = document.getElementById('downloadFormat').value;
-        formData.append('format', downloadFormat);
-
-        status.textContent = "⏳ Processing...";
-    
-        try {
-          const res = await fetch('https://nlpulse-cleaner-backend.onrender.com/process', {
-            method: 'POST',
-            body: formData
-          });
-    
-          if (!res.ok) {
-            const error = await res.json();
-            status.textContent = `❌ ${error.error || "Processing failed."}`;
-            return;
-          }
-
-          const text = await res.text();
-          localStorage.setItem("latestDatasetText", text);
-    
-          // ✅ Save to Firestore
-          const userDocRef = doc(db, "users", user.uid);
-          await updateDoc(userDocRef, {
-            history: arrayUnion({
-              filename: file.name.replace(/\.csv$/, '_cleaned.${downloadFormat}'),
-              date: new Date().toLocaleString(),
-              previewOnly: true
-            })
-          });
-
-    
-          // Redirect
-          setTimeout(() => {
-            window.location.href = "preview.html";
-          }, 500);
-    
-        } catch (err) {
-          console.error(err);
-          status.textContent = "❌ Error processing the dataset.";
-        }
-      });
-    });
-
-  </script>
 
 </body>
 </html>
