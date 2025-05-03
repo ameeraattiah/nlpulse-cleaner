@@ -48,8 +48,8 @@
       transition: background-color 0.3s, border-color 0.3s;
       cursor: pointer;
       margin-bottom: 2rem;
-      max-width: 500px;
       width: 100%;
+      max-width: 640px;
     }
     
     .upload-box.drag-over {
@@ -78,10 +78,10 @@
     .option-buttons {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 0.75rem;
-      margin-bottom: 1.5rem;
+      gap: 1rem;
+      justify-items: center;
+      width: 100%;
     }
-
     .option-btn {
       padding: 0.6rem 1.4rem;
       border-radius: 10px 30px 30px 10px; /* matches SELECT ALL style */
@@ -187,10 +187,13 @@
       display: flex;
       flex-direction: column;
       align-items: flex-start;
-      gap: 1rem;
-      margin-bottom: 1.5rem;
     }
     
+    .select-all {
+      align-self: flex-start;
+      margin-bottom: 1rem;
+    }
+        
     .option-buttons {
       display: flex;
       flex-wrap: wrap;
