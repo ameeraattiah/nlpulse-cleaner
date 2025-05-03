@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Upload Dataset – NLPulse Cleaner</title>
+  <title>Upload Dataset - NLPulse Cleaner</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <script type="module" src="./firebase.js"></script>
   <style>
     * {
       margin: 0;
@@ -18,156 +19,282 @@
       background-size: cover;
       display: flex;
       flex-direction: column;
-      align-items: center;
       min-height: 100vh;
-    }
-
-    .upload-container {
-      background: white;
-      padding: 2.5rem;
-      border-radius: 2rem;
-      max-width: 850px;
-      width: 90%;
-      margin-top: 2rem;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      display: flex;
-      flex-direction: column;
       align-items: center;
     }
 
-    .top-logo {
-      max-height: 80px;
-      margin-bottom: 1.5rem;
-    }
-
-    .drop-zone {
-      width: 100%;
-      border: 2px dashed #b5c7b3;
-      border-radius: 1rem;
-      background: #e7f0fd;
-      padding: 2rem;
-      margin-bottom: 2rem;
+    main {
+      margin-top: 2rem;
+      background-color: white;
+      border-radius: 2rem;
+      padding: 2rem 3rem;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      max-width: 720px;
+      width: 90%;
       text-align: center;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
     }
 
-    .drop-zone input {
+    h2 {
+      color: #5A7A99;
+      margin-bottom: 1rem;
+      font-size: 1.8rem;
+    }
+
+    .upload-box {
+      border: 2px dashed #b5c7b3;
+      padding: 1.5rem;
+      border-radius: 1rem;
+      background: #eef3f1;
+      cursor: pointer;
+      margin-bottom: 2rem;
+      transition: 0.3s;
+    }
+
+    .upload-box.drag-over {
+      background-color: #dceae2;
+      border-color: #5A7A99;
+    }
+
+    .upload-box input[type="file"] {
       display: none;
     }
 
-    .drop-zone:hover {
-      background-color: #f3f8ff;
+    #dropText {
+      font-size: 1rem;
+      color: #264866;
+      font-weight: 600;
     }
 
-    .section-title {
-      font-weight: bold;
-      margin-bottom: 0.75rem;
+    .cleaning-section-title,
+    .format-section-title {
+      font-weight: 600;
+      margin-bottom: 0.6rem;
       font-size: 1.1rem;
       color: #264866;
     }
 
-    .steps-grid {
+    .option-buttons {
       display: grid;
-      grid-template-columns: repeat(3, minmax(150px, 1fr));
-      gap: 1rem;
-      margin-bottom: 2rem;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
     }
 
-    .step-btn {
-      background-color: #5a7a99;
+    .option-btn {
+      background: #6a87a1;
       color: white;
-      padding: 0.75rem;
+      padding: 0.6rem 1rem;
       border: none;
-      border-radius: 12px;
-      font-weight: bold;
-      font-size: 0.95rem;
-      clip-path: polygon(0 0, 90% 0, 100% 50%, 90% 100%, 0 100%);
+      border-radius: 20px;
+      font-weight: 600;
       cursor: pointer;
+      transition: background 0.3s;
+      clip-path: polygon(0 0, 85% 0, 100% 50%, 85% 100%, 0 100%);
     }
 
-    .step-btn.dark {
-      background-color: #264866;
+    .option-btn:hover,
+    .option-btn.active {
+      background-color: #3f5b73;
     }
 
-    .format-selector {
+    .select-format {
       display: flex;
       justify-content: center;
-      gap: 1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
     }
 
-    .format-btn {
-      padding: 0.8rem 2rem;
-      background: #edf0f4;
-      border-radius: 0.75rem;
-      font-weight: bold;
-      cursor: pointer;
-      border: 1px solid #ccc;
+    select {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #aaa;
     }
 
-    .upload-final-btn {
+    .process-btn {
       background-color: #264866;
       color: white;
-      padding: 0.9rem 3rem;
       font-weight: bold;
+      border: none;
+      padding: 0.9rem 2rem;
+      border-radius: 12px;
       font-size: 1.1rem;
-      border-radius: 0.75rem;
-      box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+      margin-top: 1rem;
       cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .process-btn:hover {
+      background-color: #f5f0e6;
+      color: #1a1a1a;
+    }
+
+    #status {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      color: #5c6d5a;
     }
 
     footer {
       margin-top: auto;
       padding: 1rem;
+      text-align: center;
       font-size: 0.9rem;
       color: #8d9d7f;
-      text-align: center;
     }
   </style>
 </head>
 <body>
-  <main style="flex: 1; display: flex; align-items: center; justify-content: center;">
-    <div style="background: white; padding: 2rem 3rem; border-radius: 2rem; max-width: 850px; width: 100%; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.1);">
-      
-      <img src="logo.png" alt="Nukhba Labs" style="height: 60px; margin-bottom: 1rem;" />
-      
-      <h2 style="color: #5A7A99; font-size: 1.8rem; margin-bottom: 1rem;">Upload Your Arabic Dataset</h2>
-  
-      <div class="upload-box" id="dropZone" style="margin: auto;">
-        <p id="dropText">📁 Drop your file here or click to upload</p>
-        <input type="file" id="fileInput" accept=".csv,.json,.tsv,.xlsx" />
-      </div>
-  
-      <h3 style="margin-top: 2rem; font-size: 1.1rem; color: #264866;">Choose cleaning steps:</h3>
-      <div class="option-buttons" style="margin-bottom: 1.5rem;">
-        <button class="option-btn" data-value="tokenization">Tokenization</button>
-        <button class="option-btn" data-value="normalization">Normalization</button>
-        <button class="option-btn" data-value="deduplication">Deduplication</button>
-        <button class="option-btn" data-value="diacritics">Diacritics</button>
-        <button class="option-btn" data-value="blocklist">Blocklist</button>
-        <button class="option-btn" data-value="language">Language Detection</button>
-        <button class="option-btn" data-value="html">HTML Cleaning</button>
-        <button class="option-btn" data-value="noise">Noise Removal</button>
-      </div>
-  
-      <h3 style="margin-bottom: 0.5rem; font-size: 1.1rem; color: #264866;">Choose file format:</h3>
-      <select id="downloadFormat" style="margin-bottom: 1rem; padding: 0.5rem 1rem; border-radius: 10px; border: 1px solid #ccc;">
+  <main>
+    <h2>Upload Your Arabic Dataset</h2>
+
+    <div class="upload-box" id="dropZone">
+      <p id="dropText">📁 Drop your file here or click to upload</p>
+      <input type="file" id="fileInput" accept=".csv,.json,.tsv,.xlsx" />
+    </div>
+
+    <div class="cleaning-section-title">Choose cleaning steps:</div>
+    <div class="option-buttons">
+      <button class="option-btn" data-value="tokenization">Tokenization</button>
+      <button class="option-btn" data-value="normalization">Normalization</button>
+      <button class="option-btn" data-value="deduplication">Deduplication</button>
+      <button class="option-btn" data-value="diacritics">Diacritics</button>
+      <button class="option-btn" data-value="blocklist">Blocklist</button>
+      <button class="option-btn" data-value="language">Language Detection</button>
+      <button class="option-btn" data-value="html">HTML Cleaning</button>
+      <button class="option-btn" data-value="noise">Noise Removal</button>
+    </div>
+
+    <div class="format-section-title">Choose file format:</div>
+    <div class="select-format">
+      <select id="downloadFormat">
         <option value="csv">Download as CSV</option>
         <option value="json">Download as JSON</option>
         <option value="xlsx">Download as XLSX</option>
       </select>
-  
-      <br />
-      <button id="uploadBtn">Upload New Dataset</button>
-      <p id="status" style="margin-top: 1rem;"></p>
     </div>
-  </main>
 
+    <button class="process-btn" id="uploadBtn">Process Dataset</button>
+    <p id="status"></p>
+  </main>
 
   <footer>
     © 2025 NLPulse Cleaner. All rights reserved.
   </footer>
+  <script type="module">
+    import { auth } from './firebase.js';
+    import { signOut } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-auth.js";
+    import { db } from './firebase.js';
+    import { doc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/9.6.4/firebase-firestore.js";
 
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const dropText = document.getElementById('dropText');
+    const uploadBtn = document.getElementById('uploadBtn');
+    const status = document.getElementById('status');
+    const selectedOptions = new Set();
+
+    // ✅ Drag & Drop logic
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropZone.classList.add('drag-over');
+    });
+    dropZone.addEventListener('dragleave', () => {
+      dropZone.classList.remove('drag-over');
+    });
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('drag-over');
+      const file = e.dataTransfer.files[0];
+      if (file) {
+        fileInput.files = e.dataTransfer.files;
+        dropText.textContent = `📄 ${file.name}`;
+      }
+    });
+
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files.length) {
+        dropText.textContent = `📄 ${fileInput.files[0].name}`;
+      }
+    });
+
+    // ✅ Option button selection
+    document.querySelectorAll('.option-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const value = btn.dataset.value;
+        btn.classList.toggle('active');
+        if (selectedOptions.has(value)) {
+          selectedOptions.delete(value);
+        } else {
+          selectedOptions.add(value);
+        }
+      });
+    });
+
+    // ✅ Auth check + Upload
+    onAuthStateChanged(auth, user => {
+      if (!user) {
+        window.location.href = "login.html";
+        return;
+      }
+
+      uploadBtn.addEventListener('click', async () => {
+        status.textContent = "";
+        const file = fileInput.files[0];
+        if (!file) {
+          status.textContent = "⚠️ Please select a file.";
+          return;
+        }
+
+        if (selectedOptions.size === 0) {
+          status.textContent = "⚠️ Please select at least one cleaning option.";
+          return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', file);
+        selectedOptions.forEach(opt => formData.append('options[]', opt));
+        const downloadFormat = document.getElementById('downloadFormat').value;
+        formData.append('format', downloadFormat);
+
+        status.textContent = "⏳ Processing...";
+
+        try {
+          const res = await fetch('https://nlpulse-cleaner-backend.onrender.com/process', {
+            method: 'POST',
+            body: formData
+          });
+
+          if (!res.ok) {
+            const error = await res.json();
+            status.textContent = `❌ ${error.error || "Processing failed."}`;
+            return;
+          }
+
+          const text = await res.text();
+          localStorage.setItem("latestDatasetText", text);
+
+          // ✅ Save to Firestore
+          const userDocRef = doc(db, "users", user.uid);
+          await updateDoc(userDocRef, {
+            history: arrayUnion({
+              filename: file.name.replace(/\.[^/.]+$/, `_cleaned.${downloadFormat}`),
+              date: new Date().toLocaleString(),
+              previewOnly: true
+            })
+          });
+
+          setTimeout(() => {
+            window.location.href = "preview.html";
+          }, 500);
+
+        } catch (err) {
+          console.error(err);
+          status.textContent = "❌ Error processing the dataset.";
+        }
+      });
+    });
+  </script>
 </body>
 </html>
