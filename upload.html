@@ -24,7 +24,7 @@
     }
 
     main {
-      margin-top: 2rem;
+      margin-top: 4rem;
       background-color: white;
       border-radius: 2rem;
       padding: 2rem 3rem;
@@ -41,10 +41,10 @@
     }
 
     .upload-box {
-      border: 2px dashed #b5c7b3;
+      border: 2px dashed #8ab4f8;
       padding: 1.5rem;
       border-radius: 1rem;
-      background: #eef3f1;
+      background: #dceafc;
       cursor: pointer;
       margin-bottom: 2rem;
       transition: 0.3s;
@@ -109,6 +109,17 @@
       border-radius: 8px;
       border: 1px solid #aaa;
     }
+    .select-all {
+      background-color: #264866;
+      color: white;
+      border-radius: 10px;
+      font-weight: bold;
+      margin-bottom: 1rem;
+    }
+    
+    .select-all:hover {
+      background-color: #3a5a75;
+    }
 
     .process-btn {
       background-color: #264866;
@@ -140,6 +151,35 @@
       text-align: center;
       font-size: 0.9rem;
       color: #8d9d7f;
+
+    .format-options {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    
+    .format-options label {
+      background-color: #f1f1f1;
+      padding: 0.6rem 1.2rem;
+      border-radius: 1rem;
+      border: 2px solid #ccc;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    
+    .format-options input[type="radio"] {
+      display: none;
+    }
+    
+    .format-options input[type="radio"]:checked + label,
+    .format-options label:hover {
+      background-color: #264866;
+      color: white;
+      border-color: #264866;
+    }
+
     }
   </style>
 </head>
@@ -153,6 +193,7 @@
     </div>
 
     <div class="cleaning-section-title">Choose cleaning steps:</div>
+    <button id="selectAllBtn" class="option-btn select-all">SELECT ALL</button>
     <div class="option-buttons">
       <button class="option-btn" data-value="tokenization">Tokenization</button>
       <button class="option-btn" data-value="normalization">Normalization</button>
@@ -165,12 +206,11 @@
     </div>
 
     <div class="format-section-title">Choose file format:</div>
-    <div class="select-format">
-      <select id="downloadFormat">
-        <option value="csv">Download as CSV</option>
-        <option value="json">Download as JSON</option>
-        <option value="xlsx">Download as XLSX</option>
-      </select>
+      <div class="format-options">
+        <label><input type="radio" name="downloadFormat" value="csv" checked> CSV</label>
+        <label><input type="radio" name="downloadFormat" value="json"> JSON</label>
+        <label><input type="radio" name="downloadFormat" value="xlsx"> XLSX</label>
+      </div>
     </div>
 
     <button class="process-btn" id="uploadBtn">Process Dataset</button>
@@ -231,6 +271,14 @@
         }
       });
     });
+    document.getElementById('selectAllBtn').addEventListener('click', () => {
+    document.querySelectorAll('.option-btn:not(.select-all)').forEach(btn => {
+      const value = btn.dataset.value;
+      selectedOptions.add(value);
+      btn.classList.add('active');
+    });
+  });
+
 
     // ✅ Auth check + Upload
     onAuthStateChanged(auth, user => {
@@ -255,7 +303,7 @@
         const formData = new FormData();
         formData.append('file', file);
         selectedOptions.forEach(opt => formData.append('options[]', opt));
-        const downloadFormat = document.getElementById('downloadFormat').value;
+        const downloadFormat = document.querySelector('input[name="downloadFormat"]:checked').value;
         formData.append('format', downloadFormat);
 
         status.textContent = "⏳ Processing...";
