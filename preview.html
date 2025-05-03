@@ -110,12 +110,17 @@
 
   <script>
     function downloadAgain() {
-      const url = localStorage.getItem("latestDatasetURL");
-      if (url) {
+      const text = localStorage.getItem("latestDatasetText");
+      if (text) {
+        const blob = new Blob([text], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "cleaned_dataset.csv";
+        a.download = "cleaned_dataset.csv";  // Change this extension if needed
+        document.body.appendChild(a);
         a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);  // Clean up memory
       } else {
         alert("No dataset found. Please go back to upload.");
       }
