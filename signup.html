@@ -203,7 +203,6 @@
         await setDoc(doc(db, "users", uid), {
           username,
           email,
-          phone,
           history: []
         });
         window.location.href = "dashboard.html";
