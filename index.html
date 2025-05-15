@@ -18,10 +18,9 @@
       position: relative;
     }
 
-    .arrow-button {
+    .button {
       position: absolute;
-      bottom: 140px; /* Adjust this to control vertical position */
-      right: 100px;   /* Adjust this to control horizontal position */
+      right: 100px;
       font-size: 1.2rem;
       padding: 12px 32px;
       background-color: #e0e0e0;
@@ -37,27 +36,41 @@
       gap: 12px;
     }
 
-    .arrow-button .arrow {
+    .button .arrow {
       font-size: 1.6rem;
       transition: color 0.3s;
     }
 
-    .arrow-button:hover {
+    .button:hover {
       background-color: #004b8d;
       color: white;
     }
 
-    .arrow-button:hover .arrow {
+    .button:hover .arrow {
       color: white;
+    }
+
+    .login-btn {
+      bottom: 140px;
+    }
+
+    .video-btn {
+      bottom: 70px;
     }
   </style>
 </head>
 <body>
 
   <section>
-    <a href="login.html" class="arrow-button">
+    <!-- Login Button -->
+    <a href="login.html" class="button login-btn">
       تسجيل الدخول
       <span class="arrow">←</span>
+    </a>
+
+    <!-- YouTube Button -->
+    <a href="https://youtu.be/_VITd1RYnms" target="_blank" class="button video-btn">
+      شاهد الفيديو التوضيحي
     </a>
   </section>
 
