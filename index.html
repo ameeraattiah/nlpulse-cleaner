@@ -12,6 +12,7 @@
 
     section {
       height: 100vh;
+      background-image: url('1.png');
       background-size: cover;
       background-position: center;
       position: relative;
@@ -19,34 +20,41 @@
 
     .arrow-button {
       position: absolute;
-      bottom: 60px;
-      left: 60px;
-      font-size: 2rem;
-      background: rgba(255, 255, 255, 0.9);
-      border: none;
-      border-radius: 50%;
-      padding: 10px 16px;
-      text-decoration: none;
+      bottom: 140px; /* Adjust this to place it under the text */
+      right: 100px;
+      font-size: 1.2rem;
+      padding: 12px 32px;
+      background-color: #e0e0e0;
       color: #000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      transition: transform 0.3s;
+      border: none;
+      border-radius: 25px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.3s, color 0.3s;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    }
+
+    .arrow-button::before {
+      content: "←";
+      font-size: 1.6rem;
+      margin-left: 8px;
+      transition: color 0.3s;
     }
 
     .arrow-button:hover {
-      transform: scale(1.1);
+      background-color: #004b8d;
+      color: white;
+    }
+
+    .arrow-button:hover::before {
+      color: white;
     }
   </style>
 </head>
 <body>
 
-  <!-- Section 1: Robot + Arabic text -->
-  <section style="background-image: url('assests/1.png');">
-    <a href="login.html" class="arrow-button">←</a>
-  </section>
-
-  <!-- Section 2: Computer screen image -->
-  <section style="background-image: url('assests/2.png');">
-    <!-- No video here -->
+  <section>
+    <a href="login.html" class="arrow-button">تسجيل الدخول</a>
   </section>
 
 </body>
