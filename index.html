@@ -12,7 +12,7 @@
 
     section {
       height: 100vh;
-      background-image: url('1.png');
+      background-image: url('assets/1.png');
       background-size: cover;
       background-position: center;
       position: relative;
@@ -20,8 +20,8 @@
 
     .arrow-button {
       position: absolute;
-      bottom: 140px; /* Adjust this to place it under the text */
-      right: 100px;
+      bottom: 140px; /* Adjust this to control vertical position */
+      right: 100px;   /* Adjust this to control horizontal position */
       font-size: 1.2rem;
       padding: 12px 32px;
       background-color: #e0e0e0;
@@ -32,12 +32,13 @@
       text-decoration: none;
       transition: background-color 0.3s, color 0.3s;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
     }
 
-    .arrow-button::before {
-      content: "←";
+    .arrow-button .arrow {
       font-size: 1.6rem;
-      margin-left: 8px;
       transition: color 0.3s;
     }
 
@@ -46,7 +47,7 @@
       color: white;
     }
 
-    .arrow-button:hover::before {
+    .arrow-button:hover .arrow {
       color: white;
     }
   </style>
@@ -54,7 +55,10 @@
 <body>
 
   <section>
-    <a href="login.html" class="arrow-button">تسجيل الدخول</a>
+    <a href="login.html" class="arrow-button">
+      تسجيل الدخول
+      <span class="arrow">←</span>
+    </a>
   </section>
 
 </body>
