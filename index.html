@@ -1,65 +1,53 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>الصفحة الرئيسية - Nukhba Labs</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <title>Nukhba Labs</title>
   <style>
-    * {
+    body {
       margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+      font-family: sans-serif;
+      overflow-x: hidden;
     }
 
-    html, body {
-      font-family: 'Inter', sans-serif;
-      min-height: 100vh;
-      scroll-behavior: smooth;
-    }
-
-    .hero {
-      background: url('backgrounds/home.png') no-repeat center center;
+    section {
+      height: 100vh;
       background-size: cover;
-      min-height: 100vh; /* not fixed height */
+      background-position: center;
       position: relative;
     }
 
-    .overlay {
+    .arrow-button {
       position: absolute;
-      bottom: 22%;
-      right: 10%;
-      text-align: right;
-    }
-
-    .start-btn {
-      background-color: #264866;
-      color: white;
-      padding: 0.8rem 2rem;
-      font-size: 1rem;
+      bottom: 60px;
+      left: 60px;
+      font-size: 2rem;
+      background: rgba(255, 255, 255, 0.9);
       border: none;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
+      border-radius: 50%;
+      padding: 10px 16px;
+      text-decoration: none;
+      color: #000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      transition: transform 0.3s;
     }
 
-    .start-btn:hover {
-      background-color: #3e5a74;
+    .arrow-button:hover {
+      transform: scale(1.1);
     }
   </style>
 </head>
 <body>
 
-  <div class="hero">
-    <div class="overlay">
-      <a href="login.html">
-        <button class="start-btn">ابدأ الآن</button>
-      </a>
-    </div>
-  </div>
-  <!-- This dummy section enables scrolling -->
-  <div style="height: 200vh; background: #f9f9f9;"></div>
+  <!-- Section 1: Robot + Arabic text -->
+  <section style="background-image: url('1.png');">
+    <a href="login.html" class="arrow-button">←</a>
+  </section>
+
+  <!-- Section 2: Computer screen image -->
+  <section style="background-image: url('2.png');">
+    <!-- No video here -->
+  </section>
 
 </body>
 </html>
