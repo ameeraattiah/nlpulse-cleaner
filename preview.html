@@ -180,7 +180,6 @@
     onAuthStateChanged(auth, (user) => {
       renderNav(!!user);
     });
-
     window.downloadAgain = function () {
       const url = localStorage.getItem("latestDatasetURL");
       const format = localStorage.getItem("latestDatasetFormat") || "csv";
@@ -192,7 +191,8 @@
         a.click();
         document.body.removeChild(a);
       } else {
-        alert("No dataset found. Please go back to upload.");
+        alert("⚠️ No dataset available. Redirecting to upload...");
+        window.location.href = "upload.html";
       }
     };
   </script>
